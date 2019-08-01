@@ -132,7 +132,7 @@
 <meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/姓名索引结构.png">
 <meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/姓名内容结构.png">
 <meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/身份证二级索引结构2.png">
-<meta property="og:updated_time" content="2019-07-22T17:06:23.629Z">
+<meta property="og:updated_time" content="2019-08-01T14:02:56.431Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一次数据查询设计实现始末">
 <meta name="twitter:description" content="现有一文本文件，文件内容每行记录由3个字段组成，字段间以’\t’分隔，每行以’\n’分隔，3个字段分别为”身份证号码 手机号码 姓名“。现需要提供一个服务，业务可通过服务根据身份证号码或者手机号码精确查询相关记录。那么如何设计，使得查询响应延迟低、吞吐高和资源消耗低。">
@@ -265,6 +265,16 @@
           </a>
         </li>
       
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
 
       
         <li class="menu-item menu-item-search">
@@ -375,8 +385,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-07-23T01:06:23+08:00">
-                2019-07-23
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-01T22:02:56+08:00">
+                2019-08-01
               </time>
             
           </span>
@@ -417,6 +427,16 @@
           
 
           
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/22/a-index-for-data-query-design-and-implementation/" itemprop="commentCount"></span>
+                </a>
+              </span>
             
           
 
@@ -1191,6 +1211,8 @@
 
 <h2 id="六、后记"><a href="#六、后记" class="headerlink" title="六、后记"></a>六、后记</h2><p>整个过程中涉及到了不少知识点，通过整个设计实现过程，将这些知识点进行了串联和实践，有了更多地理解，也发现之前一些想当然的东西。痛并快乐着吧:P。</p>
 <p>算是抛砖引玉吧，如果你有更好地设计或者改进，欢迎交流。</p>
+<iframe src="//ghbtns.com/github-btn.html?user=neotse&repo=toy-index-file&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+
 <h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><h3 id="1-身份证校验码计算"><a href="#1-身份证校验码计算" class="headerlink" title="1. 身份证校验码计算"></a>1. 身份证校验码计算</h3><p>第一步身份证号码（除第18位校验码外）每一位（从1开始）按照以下方法计算相应的权重：<br>$$<br>W_i = 2^{18 - i} \mod 11<br>$$<br>第二步使用计算得到权重进行身份证号码（除第18位校验码外）加权求和：<br>$$<br>S = \sum_{i=1}^{17} a_i . W_i<br>$$<br>第三步求余得到校验码$a_{18}$，如果等于10，则使用<code>X</code>表示：<br>$$<br>a_{18} = (12 - (S \mod 11))\mod 11<br>$$<br>参考代码</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span>[] ch = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">18</span>];</span><br><span class="line">System.arraycopy(oldCertNum.toCharArray(), <span class="number">0</span>, ch, <span class="number">0</span>, oldCertNum.length());</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ch.length - <span class="number">1</span>; i++) &#123;</span><br><span class="line">  sum += ((<span class="number">1</span> &lt;&lt; (<span class="number">17</span> - i)) % <span class="number">11</span>) * (ch[i] - <span class="string">'0'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> code = (<span class="number">12</span> - (sum % <span class="number">11</span>)) % <span class="number">11</span>;</span><br><span class="line">ch[<span class="number">17</span>] = code &lt; <span class="number">10</span> ? (<span class="keyword">char</span>) (<span class="string">'0'</span> + code) : <span class="string">'X'</span>;</span><br></pre></td></tr></table></figure>
 
@@ -1277,6 +1299,13 @@
 
           
   <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
     
   </div>
 
@@ -1571,6 +1600,26 @@
 
   
 
+    
+      <script id="dsq-count-scr" src="https://johntse.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/';
+          this.page.identifier = '2019/07/22/a-index-for-data-query-design-and-implementation/';
+          this.page.title = '一次数据查询设计实现始末';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://johntse.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
 
 
 
@@ -1583,10 +1632,6 @@
   
 
 
-
-
-
-  
 
 
 
@@ -1921,6 +1966,21 @@
   
 
   
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
 
   
 
