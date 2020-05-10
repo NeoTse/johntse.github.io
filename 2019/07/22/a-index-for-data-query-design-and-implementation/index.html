@@ -118,25 +118,25 @@
 <meta name="keywords" content="index,performance,linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一次数据查询设计实现始末">
-<meta property="og:url" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/index.html">
+<meta property="og:url" content="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/index.html">
 <meta property="og:site_name" content="敏思·践行">
 <meta property="og:description" content="现有一文本文件，文件内容每行记录由3个字段组成，字段间以’\t’分隔，每行以’\n’分隔，3个字段分别为”身份证号码 手机号码 姓名“。现需要提供一个服务，业务可通过服务根据身份证号码或者手机号码精确查询相关记录。那么如何设计，使得查询响应延迟低、吞吐高和资源消耗低。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/索引总体结构.png">
-<meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/元数据结构.png">
-<meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/身份证一级索引结构.png">
-<meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/身份证二级索引结构.png">
-<meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/身份证索引内容结构.png">
-<meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/手机号索引内容结构.png">
-<meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/姓名索引总体结构.png">
-<meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/姓名索引结构.png">
-<meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/姓名内容结构.png">
-<meta property="og:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/身份证二级索引结构2.png">
+<meta property="og:image" content="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/索引总体结构.png">
+<meta property="og:image" content="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/元数据结构.png">
+<meta property="og:image" content="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/身份证一级索引结构.png">
+<meta property="og:image" content="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/身份证二级索引结构.png">
+<meta property="og:image" content="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/身份证索引内容结构.png">
+<meta property="og:image" content="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/手机号索引内容结构.png">
+<meta property="og:image" content="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/姓名索引总体结构.png">
+<meta property="og:image" content="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/姓名索引结构.png">
+<meta property="og:image" content="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/姓名内容结构.png">
+<meta property="og:image" content="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/身份证二级索引结构2.png">
 <meta property="og:updated_time" content="2020-05-10T04:43:40.144Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一次数据查询设计实现始末">
 <meta name="twitter:description" content="现有一文本文件，文件内容每行记录由3个字段组成，字段间以’\t’分隔，每行以’\n’分隔，3个字段分别为”身份证号码 手机号码 姓名“。现需要提供一个服务，业务可通过服务根据身份证号码或者手机号码精确查询相关记录。那么如何设计，使得查询响应延迟低、吞吐高和资源消耗低。">
-<meta name="twitter:image" content="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/索引总体结构.png">
+<meta name="twitter:image" content="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/索引总体结构.png">
 
 
 
@@ -165,7 +165,7 @@
 
 
 
-  <link rel="canonical" href="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/">
+  <link rel="canonical" href="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/">
 
 
 
@@ -340,7 +340,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://johntse.me">
+    <link itemprop="mainEntityOfPage" href="https://johntse.dev">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Tse">
@@ -1246,7 +1246,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/" title="一次数据查询设计实现始末">https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/</a>
+    <a href="https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/" title="一次数据查询设计实现始末">https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -1623,7 +1623,7 @@
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'https://johntse.me/2019/07/22/a-index-for-data-query-design-and-implementation/';
+          this.page.url = 'https://johntse.dev/2019/07/22/a-index-for-data-query-design-and-implementation/';
           this.page.identifier = '2019/07/22/a-index-for-data-query-design-and-implementation/';
           this.page.title = '一次数据查询设计实现始末';
         };
