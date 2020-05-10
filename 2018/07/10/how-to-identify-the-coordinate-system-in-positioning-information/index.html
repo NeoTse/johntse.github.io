@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link href="https://cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+  
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="algorithm,lbs,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="由于工作关系会接触到一些带有定位信息的数据，而在中国地理位置信息这个事比较复杂，存在多种坐标系混用的情况。而很多时候数据中往往没有标识出具体的坐标系，如果直接使用可能会造成位置偏差等问题。这里分享一下本人的拙法（特殊地形法）。">
+<meta name="keywords" content="algorithm,lbs">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何识别定位信息中的坐标系">
+<meta property="og:url" content="https://johntse.dev/2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/index.html">
+<meta property="og:site_name" content="敏思·践行">
+<meta property="og:description" content="由于工作关系会接触到一些带有定位信息的数据，而在中国地理位置信息这个事比较复杂，存在多种坐标系混用的情况。而很多时候数据中往往没有标识出具体的坐标系，如果直接使用可能会造成位置偏差等问题。这里分享一下本人的拙法（特殊地形法）。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://johntse.dev/2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/特殊地形区域.png">
+<meta property="og:image" content="https://johntse.dev/2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/特殊地形区域2.png">
+<meta property="og:updated_time" content="2020-05-10T06:57:00.868Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何识别定位信息中的坐标系">
+<meta name="twitter:description" content="由于工作关系会接触到一些带有定位信息的数据，而在中国地理位置信息这个事比较复杂，存在多种坐标系混用的情况。而很多时候数据中往往没有标识出具体的坐标系，如果直接使用可能会造成位置偏差等问题。这里分享一下本人的拙法（特殊地形法）。">
+<meta name="twitter:image" content="https://johntse.dev/2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/特殊地形区域.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"hide","offset":12,"offset_float":12,"b2t":false,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://johntse.dev/2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/">
+
+
+
+
+
+  <title>如何识别定位信息中的坐标系 | 敏思·践行</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">敏思·践行</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">有关思维、技术和生活的絮叨</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://johntse.dev">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Tse">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars2.githubusercontent.com/u/3964478?v=3&s=460">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="敏思·践行">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">如何识别定位信息中的坐标系</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-10T09:40:58+08:00">
+                2018-07-10
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2020-05-10T14:57:00+08:00">
+                2020-05-10
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../../../categories/engineering/" itemprop="url" rel="index">
+                    <span itemprop="name">engineering</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.1k 字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  18 分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>由于工作关系会接触到一些带有定位信息的数据，而在中国地理位置信息这个事比较复杂，存在多种坐标系混用的情况。而很多时候数据中往往没有标识出具体的坐标系，如果直接使用可能会造成位置偏差等问题。这里分享一下本人的拙法（特殊地形法）。</p>
+<a id="more"></a>
+
+
+<h2 id="一、特殊地形选取"><a href="#一、特殊地形选取" class="headerlink" title="一、特殊地形选取"></a>一、特殊地形选取</h2><p>这里通过特殊地形法，来进行坐标系识别。</p>
+<p><em>注：所有的经纬度采用度数表示。</em></p>
+<h3 id="1-相关计算公式"><a href="#1-相关计算公式" class="headerlink" title="1. 相关计算公式"></a>1. 相关计算公式</h3><p>具体可参考：<a href="https://www.movable-type.co.uk/scripts/latlong.html" target="_blank" rel="noopener">Calculate distance, bearing and more between Latitude/Longitude points</a> 。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 坐标表示</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Coordinate</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> DecimalFormat format = <span class="keyword">new</span> DecimalFormat(<span class="string">"#.000000"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">double</span> lng; <span class="comment">// 经度</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">double</span> lat; <span class="comment">// 纬度</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Coordinate</span><span class="params">(<span class="keyword">double</span> lng, <span class="keyword">double</span> lat)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.lng = lng;</span><br><span class="line">        <span class="keyword">this</span>.lat = lat;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Coordinate&#123; longitude='"</span> + format.format(lng) + <span class="string">'\''</span> </span><br><span class="line">                + <span class="string">", latitude='"</span> + format.format(lat) + <span class="string">'\''</span> + <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="经纬度到距离"><a href="#经纬度到距离" class="headerlink" title="经纬度到距离"></a>经纬度到距离</h4><p>这里使用Harversine公式来计算两个经纬度之间的距离（单位：米）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> EARTH_RADIUS = <span class="number">6371001</span>; <span class="comment">// 地球平均半径</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 使用Harversine公式来计算两个经纬度之间的距离（单位：米）</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lng1 第一个经度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lat1 第一个纬度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lng2 第二个经度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lat2 第二个纬度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 计算得到的距离，单位米</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">distHarversine</span><span class="params">(<span class="keyword">double</span> lng1， <span class="keyword">double</span> lat1, <span class="keyword">double</span> lng2, <span class="keyword">double</span> lat2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">double</span> hsinX = Math.sin(Math.toRadians(lng1 - lng2) * <span class="number">0.5</span>);</span><br><span class="line">    <span class="keyword">double</span> hsinY = Math.sin(Math.toRadians(lat1 - lat2) * <span class="number">0.5</span>);</span><br><span class="line">    <span class="keyword">double</span> h = hsinY * hsinY</span><br><span class="line">              + (Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * hsinX * hsinX);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span> * Math.atan2(Math.sqrt(h), Math.sqrt(<span class="number">1</span> - h)) * EARTH_RADIUS; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="方位角计算"><a href="#方位角计算" class="headerlink" title="方位角计算"></a>方位角计算</h4><p>给定两个点的经纬，可通过以下公式计算得到两点之间的方位角（从正北开始顺时针）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 计算起始点到目的点的方位角。</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> bLng 起始点经度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> bLat 起始点纬度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> eLng 目的点经度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> eLat 目的点纬度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 起始点到目的点的方位角（度数表示）</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">initBearing</span><span class="params">(<span class="keyword">double</span> bLng, <span class="keyword">double</span> bLat, <span class="keyword">double</span> eLng, <span class="keyword">double</span> eLat)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> delta = Math.toRadians(eLng - bLng);</span><br><span class="line">  <span class="keyword">double</span> bRadiusLat = Math.toRadians(bLat);</span><br><span class="line">  <span class="keyword">double</span> eRadiusLat = Math.toRadians(eLat);</span><br><span class="line">  <span class="keyword">double</span> theta = Math.atan2(Math.sin(delta) * Math.cos(eRadiusLat), Math.cos(bRadiusLat) * Math.sin(eRadiusLat) - Math.sin(bRadiusLat) * Math.cos(eRadiusLat) * Math.cos(delta));</span><br><span class="line">  <span class="keyword">return</span> (Math.toDegrees(theta) + <span class="number">360</span>) % <span class="number">360</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 计算目的点到起始点的方位角。</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> bLng 起始点经度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> bLat 起始点纬度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> eLng 目的点经度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> eLat 目的点纬度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 目的点到起始点的方位角（度数表示）</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">finalBearing</span><span class="params">(<span class="keyword">double</span> bLng, <span class="keyword">double</span> bLat, <span class="keyword">double</span> eLng, <span class="keyword">double</span> eLat)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (initBearing(bLng, bLat, eLng, eLat) + <span class="number">180</span>) % <span class="number">360</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="距离到经纬度"><a href="#距离到经纬度" class="headerlink" title="距离到经纬度"></a>距离到经纬度</h4><p>这里使用下面公式来计算给定距离、起始坐标和方位角（从正北开始顺时针）的目的坐标。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 计算给定距离、起始坐标和方位角（从正北开始顺时针）的目的坐标</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lng 起始点经度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lat 起始点纬度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> brng 方位角（度数表示）</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> distance 距离(单位：米)</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Coordinate <span class="title">destinationPoint</span><span class="params">(<span class="keyword">double</span> lng, <span class="keyword">double</span> lat, <span class="keyword">double</span> brng, <span class="keyword">double</span> distance)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> a = distance / EARTH_RADIUS;</span><br><span class="line">  <span class="keyword">double</span> theta = Math.toRadians(brng);</span><br><span class="line">  <span class="keyword">double</span> radiansLat = Math.toRadians(lat);</span><br><span class="line">  <span class="keyword">double</span> radiansLng = Math.toRadians(lng);</span><br><span class="line">  <span class="keyword">double</span> phi = Math.sin(radiansLat) * Math.cos(a) </span><br><span class="line">                          + Math.cos(radiansLat) * Math.sin(a) * Math.cos(theta);</span><br><span class="line">  <span class="keyword">double</span> dLat = Math.asin(phi);</span><br><span class="line">  <span class="keyword">double</span> dLng = radiansLng + Math.atan2(Math.sin(theta) * Math.sin(a) * Math.cos(radiansLat),</span><br><span class="line">                                Math.cos(a) - Math.sin(radiansLat) * phi);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> Coordinate(((Math.toDegrees(dLng) + <span class="number">540</span>) % <span class="number">360</span> - <span class="number">180</span>), Math.toDegrees(dLat));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-区域范围确定"><a href="#2-区域范围确定" class="headerlink" title="2. 区域范围确定"></a>2. 区域范围确定</h3><p>以杭州的西兴大桥为例。</p>
+<p><em>注：这里坐标采用百度坐标系。</em></p>
+<h4 id="范围划定"><a href="#范围划定" class="headerlink" title="范围划定"></a>范围划定</h4><p>大桥为西北-东南走向，位于江面长度约为1.2公里。为了应对坐标系不同的偏移情况，分别向东北和西南方向延伸1.5公里。得到一个长为3公里，宽为1.2公里的矩形。</p>
+<h4 id="范围坐标"><a href="#范围坐标" class="headerlink" title="范围坐标"></a>范围坐标</h4><p>其中共有六个点，它们的坐标为：</p>
+<h5 id="地形两端坐标点"><a href="#地形两端坐标点" class="headerlink" title="地形两端坐标点"></a>地形两端坐标点</h5><ul>
+<li>大桥西北点（$x_1$）：120.216268, 30.238929</li>
+<li>大桥东南点（$x_2$）：120.225994, 30.232221</li>
+</ul>
+<p>通过“方位角计算”章节给出的公式计算得到大桥方位角为$128.598^{\circ}(x_2 \rightarrow x_1)$。</p>
+<h5 id="矩形的四个断点的坐标点"><a href="#矩形的四个断点的坐标点" class="headerlink" title="矩形的四个断点的坐标点"></a>矩形的四个断点的坐标点</h5><p>通过“距离到经纬度”章节给出的公式进行计算。其中距离为1500米，角度分别为$38.598^{\circ}$和$218.598^{\circ}$，起始点分别为$x_1$和$x_2$ 。</p>
+<ul>
+<li>矩形西北点（$x_a$）：120.226010, 30.249472</li>
+<li>矩形东北点（$x_b$）：120.235735, 30.242764</li>
+<li>矩形东南点（$x_c$）：120.216255, 30.221678</li>
+<li>矩形西南点（$x_d$）：120.206528, 30.228386</li>
+</ul>
+<h4 id="区域图示"><a href="#区域图示" class="headerlink" title="区域图示"></a>区域图示</h4><p>最终得到的区域</p>
+<img src="/2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/特殊地形区域.png" title="特殊地形区域">
+
+<h3 id="3-区域数学描述"><a href="#3-区域数学描述" class="headerlink" title="3. 区域数学描述"></a>3. 区域数学描述</h3><p>这里我们将经纬度看作为实数。经度作为x轴，纬度作为y轴。由于区域面积很小，我们可以认为其为平面，且各个边为直线。</p>
+<h4 id="描述方式"><a href="#描述方式" class="headerlink" title="描述方式"></a>描述方式</h4><p>这里直接采用直线$y=ax+b$来进行简单表示。因此共有五条直线来表示，其中四条表示矩形，一条表示大桥本身。</p>
+<h4 id="直线方程"><a href="#直线方程" class="headerlink" title="直线方程"></a>直线方程</h4><h5 id="大桥的直线方程"><a href="#大桥的直线方程" class="headerlink" title="大桥的直线方程"></a>大桥的直线方程</h5><p>$$<br>\begin{cases}<br>120.216268 \times a + b - 30.238929 = 0 \<br>120.225994 \times a + b - 30.232221 = 0<br>\end{cases}<br>$$<br>根据<br>$$<br>\begin{cases}<br>a = \frac {y_1 - y_2} {x_1 - x_2} \<br>b = y_1 - x_1 \times a<br>\end{cases}<br>$$<br>求得<br>$$<br>L_{12}(x) =  -0.689698 \times x + 113.151815<br>$$</p>
+<h5 id="矩形四条边的直线方程"><a href="#矩形四条边的直线方程" class="headerlink" title="矩形四条边的直线方程"></a>矩形四条边的直线方程</h5><p>和大桥的直线方程同理可以求得：</p>
+<ul>
+<li>$L_{ab}(x) = -0.689769 \times x + 113.177603$</li>
+<li>$L_{bc}(x) = 1.082444 \times x - 99.905630$</li>
+<li>$L_{cd}(x) = -0.689627 \times x + 113.1260306$</li>
+<li>$L_{ad}(x) = 1.082332 \times x - 99.875035$</li>
+</ul>
+<h4 id="区域图示-1"><a href="#区域图示-1" class="headerlink" title="区域图示"></a>区域图示</h4><p>最终效果</p>
+<img src="/2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/特殊地形区域2.png" title="特殊地形区域2">
+
+
+<h3 id="4-坐标范围数据筛选"><a href="#4-坐标范围数据筛选" class="headerlink" title="4. 坐标范围数据筛选"></a>4. 坐标范围数据筛选</h3><p>确定了坐标范围，为了避免其它数据的干扰，需要筛选出指定范围内的数据。由于已经通过直线方程对范围进行了形式化，那么是否在所选定的西兴大桥区域，可按照下面的条件进行筛选。<br>$$<br>\begin{cases}<br>L_{ab}(x) \le 0 \<br>L_{bc}(x) \ge 0 \<br>L_{cd}(x) \ge 0 \<br>L_{ad}(x) \le 0<br>\end{cases}<br>$$</p>
+<p>更一般的，我们可以进行推广为：</p>
+<p>设直线$L12$的方位角(initBearing)为$\theta_{12}$，则有<br>$$<br>\theta_{12} \le 90^{\circ} \Longrightarrow \begin{cases}<br>L_{ab}(x) \le 0 \<br>L_{bc}(x) \le 0 \<br>L_{cd}(x) \ge 0 \<br>L_{ad}(x) \ge 0<br>\end{cases}<br>\quad ,<br>\theta_{12} \gt 90^{\circ} \Longrightarrow \begin{cases}<br>L_{ab}(x) \le 0 \<br>L_{bc}(x) \ge 0 \<br>L_{cd}(x) \ge 0 \<br>L_{ad}(x) \le 0<br>\end{cases}<br>$$</p>
+<h3 id="5-关于区域选择"><a href="#5-关于区域选择" class="headerlink" title="5. 关于区域选择"></a>5. 关于区域选择</h3><p>人工通过地图选定几个特殊地形，并生成区域范围。通过过滤出的数据量（越多越好）来筛选合适的用于坐标系分析的特殊地形。</p>
+<p>当然，也可以通过结合多个特殊地形的分析结果，得到更加准确的结果。</p>
+<h3 id="6-特殊地形持久化表示"><a href="#6-特殊地形持久化表示" class="headerlink" title="6. 特殊地形持久化表示"></a>6. 特殊地形持久化表示</h3><p>为了复用，对特性地形进行持久化存储。其中存储方式采用json文件。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"lines"</span>: &#123;</span><br><span class="line">    <span class="attr">"FirstLine"</span>: &#123;</span><br><span class="line">      <span class="attr">"coefficients"</span>: [</span><br><span class="line">        <span class="number">113.18239016103625</span>,</span><br><span class="line">        <span class="number">-0.6897605959829629</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">"endpoints"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">"x"</span>: <span class="number">120.22925792992226</span>,</span><br><span class="line">          <span class="attr">"y"</span>: <span class="number">30.252985556703706</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">"x"</span>: <span class="number">120.2389830430509</span>,</span><br><span class="line">          <span class="attr">"y"</span>: <span class="number">30.246277556876095</span></span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">"checkFlag"</span>: <span class="string">"LessEqual"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"SecondLine"</span>: &#123;</span><br><span class="line">      <span class="attr">"coefficients"</span>: [</span><br><span class="line">        <span class="number">-99.89916529550732</span>,</span><br><span class="line">        <span class="number">1.0823897504670807</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">"endpoints"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">"x"</span>: <span class="number">120.2389830430509</span>,</span><br><span class="line">          <span class="attr">"y"</span>: <span class="number">30.246277556876095</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">"x"</span>: <span class="number">120.21300867072875</span>,</span><br><span class="line">          <span class="attr">"y"</span>: <span class="number">30.218163162499796</span></span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">"checkFlag"</span>: <span class="string">"GreatEqual"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"ThirdLine"</span>: &#123;</span><br><span class="line">      <span class="attr">"coefficients"</span>: [</span><br><span class="line">        <span class="number">113.12124983242019</span>,</span><br><span class="line">        <span class="number">-0.6896349037981184</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">"endpoints"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">"x"</span>: <span class="number">120.21300867072875</span>,</span><br><span class="line">          <span class="attr">"y"</span>: <span class="number">30.218163162499796</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">"x"</span>: <span class="number">120.20328178511033</span>,</span><br><span class="line">          <span class="attr">"y"</span>: <span class="number">30.22487116232751</span></span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">"checkFlag"</span>: <span class="string">"GreatEqual"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"FourthLine"</span>: &#123;</span><br><span class="line">      <span class="attr">"coefficients"</span>: [</span><br><span class="line">        <span class="number">-99.87305113862793</span>,</span><br><span class="line">        <span class="number">1.0823158932842945</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">"endpoints"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">"x"</span>: <span class="number">120.22925792992226</span>,</span><br><span class="line">          <span class="attr">"y"</span>: <span class="number">30.252985556703706</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">"x"</span>: <span class="number">120.20328178511033</span>,</span><br><span class="line">          <span class="attr">"y"</span>: <span class="number">30.22487116232751</span></span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">"checkFlag"</span>: <span class="string">"LessEqual"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"SpecialLine"</span>: &#123;</span><br><span class="line">      <span class="attr">"coefficients"</span>: [</span><br><span class="line">        <span class="number">113.151814640954</span>,</span><br><span class="line">        <span class="number">-0.6896977174582894</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">"endpoints"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">"x"</span>: <span class="number">120.216268</span>,</span><br><span class="line">          <span class="attr">"y"</span>: <span class="number">30.238929</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">"x"</span>: <span class="number">120.225994</span>,</span><br><span class="line">          <span class="attr">"y"</span>: <span class="number">30.232221</span></span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">"checkFlag"</span>: <span class="string">"Equal"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、坐标系分析"><a href="#二、坐标系分析" class="headerlink" title="二、坐标系分析"></a>二、坐标系分析</h2><h3 id="1-坐标系"><a href="#1-坐标系" class="headerlink" title="1. 坐标系"></a>1. 坐标系</h3><p>由于各类原因，国内坐标系统使用情况比较复杂，目前已知的有：</p>
+<table>
+<thead>
+<tr>
+<th>坐标系</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WGS-84</td>
+<td>国际通用坐标系或者称大地坐标系，国外及港澳台常用</td>
+</tr>
+<tr>
+<td>GCJ-02</td>
+<td>中国特色，又称为火星坐标系或者国测局坐标系，国内地图服务商必须使用</td>
+</tr>
+<tr>
+<td>BD-09</td>
+<td>百度坐标系，在GCJ-02基础上进一步进行加偏处理</td>
+</tr>
+<tr>
+<td>图吧坐标系</td>
+<td>目前图吧地图使用，在GCJ-02基础上进一步进行加偏处理</td>
+</tr>
+<tr>
+<td>搜狗坐标系</td>
+<td>目前搜狗地图使用，在GCJ-02基础上进一步进行加偏处理</td>
+</tr>
+</tbody></table>
+<h3 id="2-坐标系转换"><a href="#2-坐标系转换" class="headerlink" title="2. 坐标系转换"></a>2. 坐标系转换</h3><p><em>注：这里目前只有三大坐标系转换算法</em></p>
+<h4 id="WGS-84-与-GCJ-02"><a href="#WGS-84-与-GCJ-02" class="headerlink" title="WGS-84 与 GCJ-02"></a>WGS-84 与 GCJ-02</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.Math.PI;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.Math.sin;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.Math.cos;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.Math.sqrt;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.Math.abs;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.Math.atan2;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">double</span> a = <span class="number">6378245.0</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">double</span> ee = <span class="number">0.00669342162296594323</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">double</span> <span class="title">transformLat</span><span class="params">(<span class="keyword">double</span> lng, <span class="keyword">double</span> lat)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> ret = -<span class="number">100.0</span> + <span class="number">2.0</span> * lng + <span class="number">3.0</span> * lat + <span class="number">0.2</span> * lat * lat </span><br><span class="line">    + <span class="number">0.1</span> * lng * lat + <span class="number">0.2</span> * sqrt(abs(lng));</span><br><span class="line">  ret += (<span class="number">20.0</span> * sin(<span class="number">6.0</span> * lng * PI) + <span class="number">20.0</span> * sin(<span class="number">2.0</span> * lng * PI)) * <span class="number">2.0</span> / <span class="number">3.0</span>;</span><br><span class="line">  ret += (<span class="number">20.0</span> * sin(lat * PI) + <span class="number">40.0</span> * sin(lat / <span class="number">3.0</span> * PI)) * <span class="number">2.0</span> / <span class="number">3.0</span>;</span><br><span class="line">  ret += (<span class="number">160.0</span> * sin(lat / <span class="number">12.0</span> * PI) + <span class="number">320</span> * sin(lat * PI / <span class="number">30</span>)) * <span class="number">2.0</span> /<span class="number">3.0</span>;</span><br><span class="line">  <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">double</span> <span class="title">transformLng</span><span class="params">(<span class="keyword">double</span> lng, <span class="keyword">double</span> lat)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> ret = <span class="number">300.0</span> + lng + <span class="number">2.0</span> * lat + <span class="number">0.1</span> * lng * lng + <span class="number">0.1</span> * lng * lat </span><br><span class="line">    + <span class="number">0.1</span> * sqrt(abs(lng));</span><br><span class="line">  ret += (<span class="number">20.0</span> * sin(<span class="number">6.0</span> * lng * PI) + <span class="number">20.0</span> * sin(<span class="number">2.0</span> * lng * PI)) * <span class="number">2.0</span> / <span class="number">3.0</span>;</span><br><span class="line">  ret += (<span class="number">20.0</span> * sin(lng * PI) + <span class="number">40.0</span> * sin(lng / <span class="number">3.0</span> * PI)) * <span class="number">2.0</span> / <span class="number">3.0</span>;</span><br><span class="line">  ret += (<span class="number">150.0</span> * sin(lng / <span class="number">12.0</span> * PI) + <span class="number">300.0</span> * sin(lng / <span class="number">30.0</span> * PI)) * <span class="number">2.0</span> / <span class="number">3.0</span>;</span><br><span class="line">  <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * WGS-84坐标系转GCJ-02坐标系</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lng 经度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lat 纬度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 转换后的坐标对象（GCJ-02坐标系）</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Coordinate <span class="title">wgsToGcj</span><span class="params">(<span class="keyword">double</span> lng, <span class="keyword">double</span> lat)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> dLat = transformLat(lng - <span class="number">105.0</span>, lat - <span class="number">35.0</span>);</span><br><span class="line">  <span class="keyword">double</span> dLng = transformLng(lng - <span class="number">105.0</span>, lat - <span class="number">35.0</span>);</span><br><span class="line">  <span class="keyword">double</span> radLat = lat / <span class="number">180.0</span> * PI;</span><br><span class="line">  <span class="keyword">double</span> magic = sin(radLat);</span><br><span class="line">  magic = <span class="number">1</span> - ee * magic * magic;</span><br><span class="line">  <span class="keyword">double</span> sqrtMagic = sqrt(magic);</span><br><span class="line">  dLat = (dLat * <span class="number">180.0</span>) / ((a * (<span class="number">1</span> - ee)) / (magic * sqrtMagic) * PI);</span><br><span class="line">  dLng = (dLng * <span class="number">180.0</span>) / (a / sqrtMagic * cos(radLat) * PI);</span><br><span class="line">  <span class="keyword">double</span> mgLat = lat + dLat;</span><br><span class="line">  <span class="keyword">double</span> mgLng = lng + dLng;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> Coordinate(mgLng, mgLat);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * GCJ-02坐标系转WGS-84坐标系</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lng 经度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lat 纬度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 转换后的坐标对象（WGS-84）</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Coordinate <span class="title">gcjToWgs</span><span class="params">(<span class="keyword">double</span> lng, <span class="keyword">double</span> lat)</span> </span>&#123;</span><br><span class="line">  Coordinate temp = wgsToGcj(lng, lat);</span><br><span class="line">  <span class="keyword">double</span> wLng = lng * <span class="number">2</span> - temp.lng;</span><br><span class="line">  <span class="keyword">double</span> wLat = lat * <span class="number">2</span> - temp.lat;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> Coordinate(wLng, wLat);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>具体请参考：<a href="https://blog.genglinxiao.com/%E4%B8%AD%E5%9B%BD%E5%9C%B0%E5%9B%BE%E5%9D%90%E6%A0%87%E5%81%8F%E7%A7%BB%E7%AE%97%E6%B3%95%E7%A0%B4%E8%A7%A3%E5%B0%8F%E5%8F%B2/" target="_blank" rel="noopener">中国地图坐标(GCJ-02)偏移算法破解小史</a> 。</p>
+<h4 id="GCJ-02-与-BD-09"><a href="#GCJ-02-与-BD-09" class="headerlink" title="GCJ-02 与 BD-09"></a>GCJ-02 与 BD-09</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">double</span> X_PI = PI * <span class="number">3000.0</span> / <span class="number">180.0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * GCJ-02坐标系转BD-09坐标系</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lng 经度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lat 纬度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 转换后的坐标对象（BD-09）</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Coordinate <span class="title">gcjToBd</span><span class="params">(<span class="keyword">double</span> lng, <span class="keyword">double</span> lat)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> z = sqrt(lng * lng + lat * lat) + <span class="number">0.00002</span> * sin(lat * X_PI);</span><br><span class="line">  <span class="keyword">double</span> theta = atan2(lat, lng) + <span class="number">0.000003</span> * cos(lng * X_PI);</span><br><span class="line">  <span class="keyword">double</span> bdLng = z * cos(theta) + <span class="number">0.0065</span>;</span><br><span class="line">  <span class="keyword">double</span> bdLat = z * sin(theta) + <span class="number">0.006</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> Coordinate(bdLng, bdLat);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * BD-09坐标系转GCJ-02坐标系</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lng 经度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lat 纬度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 转换后的坐标对象（GCJ-02）</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Coordinate <span class="title">bdToGcj</span><span class="params">(<span class="keyword">double</span> lng, <span class="keyword">double</span> lat)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> x = lng - <span class="number">0.0065</span>, y = lat - <span class="number">0.006</span>;</span><br><span class="line">  <span class="keyword">double</span> z = sqrt(x * x + y * y) - <span class="number">0.00002</span> * sin(y * X_PI);</span><br><span class="line">  <span class="keyword">double</span> theta = atan2(y, x) - <span class="number">0.000003</span> * cos(x * X_PI);</span><br><span class="line">  <span class="keyword">double</span> gLng = z * cos(theta);</span><br><span class="line">  <span class="keyword">double</span> gLat = z * sin(theta);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> Coordinate(gLng, gLat);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="转换精度测试"><a href="#转换精度测试" class="headerlink" title="转换精度测试"></a>转换精度测试</h4><h5 id="与大厂提供的接口比较"><a href="#与大厂提供的接口比较" class="headerlink" title="与大厂提供的接口比较"></a>与大厂提供的接口比较</h5><p><em>注：百度使用<a href="lbsyun.baidu.com/index.php?title=jspopular">JavaScript API</a>进行转换测试，高德使用<a href="https://lbs.amap.com/api/webserivce/guide/api/convert" target="_blank" rel="noopener">Webservice</a>进行转换测试。</em></p>
+<table>
+<thead>
+<tr>
+<th>测试项</th>
+<th>测试经纬度</th>
+<th>百度</th>
+<th>高德</th>
+<th>实现算法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WGS-84转GCJ-02</td>
+<td>118.744288<br>31.996022</td>
+<td>118.749512<br>31.994002</td>
+<td>118.749507<br>31.993998</td>
+<td>118.749507<br>31.993998</td>
+</tr>
+<tr>
+<td>WGS-84转BD-09</td>
+<td>118.744288<br>31.996022</td>
+<td>118.756083<br>31.999686</td>
+<td>N/A</td>
+<td>118.756078<br>31.999682</td>
+</tr>
+<tr>
+<td>GCJ-02转WGS-84</td>
+<td>118.744288<br>31.996022</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>118.739069<br>31.998046</td>
+</tr>
+<tr>
+<td>GCJ-02转BD-09</td>
+<td>118.744288<br>31.996022</td>
+<td>118.750867<br>32.001671</td>
+<td>N/A</td>
+<td>118.750867<br>32.001671</td>
+</tr>
+<tr>
+<td>BD-09转GCJ-02</td>
+<td>118.744288<br>31.996022</td>
+<td>118.737702<br>31.990378</td>
+<td>118.737702<br>31.990378</td>
+<td>118.737702<br>31.990378</td>
+</tr>
+<tr>
+<td>BD-09转WGS-84</td>
+<td>118.744288<br>31.996022</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>118.732487<br>31.992403</td>
+</tr>
+</tbody></table>
+<p>结论：实现算法和大厂转换精度基本一致。</p>
+<h5 id="连续转换时的精度变化"><a href="#连续转换时的精度变化" class="headerlink" title="连续转换时的精度变化"></a>连续转换时的精度变化</h5><table>
+<thead>
+<tr>
+<th>测试项</th>
+<th>测试经纬度</th>
+<th>转换后结果</th>
+<th>偏差量(单位：米)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WGS-84=&gt;GCJ-02=&gt;WGS-84</td>
+<td>118.744288<br>31.996022</td>
+<td>118.744287<br>31.996021</td>
+<td>0.150</td>
+</tr>
+<tr>
+<td>WGS-84=&gt;BD-09=&gt;WGS-84</td>
+<td>118.744288<br>31.996022</td>
+<td>118.744287<br>31.996020</td>
+<td>0.223</td>
+</tr>
+<tr>
+<td>GCJ-02=&gt;BD-09=&gt;GCJ-02</td>
+<td>118.744288<br>31.996022</td>
+<td>118.744288<br>31.996022</td>
+<td>0.046</td>
+</tr>
+</tbody></table>
+<p>以<code>WGS-84=&gt;BD-09=&gt;WGS-84</code>精度丢失最大为例，我们通过反复转换，测试其精度丢失情况。</p>
+<table>
+<thead>
+<tr>
+<th>转换次数</th>
+<th>输入经纬度</th>
+<th>输出经纬度</th>
+<th>偏差量(单位：米)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>118.744288<br>31.996022</td>
+<td>118.744287<br>31.996020</td>
+<td>0.223</td>
+</tr>
+<tr>
+<td>2</td>
+<td>118.744287<br>31.996020</td>
+<td>118.744286<br>31.996018</td>
+<td>0.446</td>
+</tr>
+<tr>
+<td>3</td>
+<td>118.744286<br>31.996018</td>
+<td>118.744285<br>31.996016</td>
+<td>0.670</td>
+</tr>
+<tr>
+<td>4</td>
+<td>118.744285<br>31.996016</td>
+<td>118.744285<br>31.996015</td>
+<td>0.893</td>
+</tr>
+<tr>
+<td>5</td>
+<td>118.744285<br>31.996015</td>
+<td>118.744284<br>31.996013</td>
+<td>1.116</td>
+</tr>
+<tr>
+<td>6</td>
+<td>118.744284<br>31.996013</td>
+<td>118.744283<br>31.996011</td>
+<td>1.340</td>
+</tr>
+<tr>
+<td>7</td>
+<td>118.744283<br>31.996011</td>
+<td>118.744282<br>31.996009</td>
+<td>1.563</td>
+</tr>
+<tr>
+<td>8</td>
+<td>118.744282<br>31.996009</td>
+<td>118.744281<br>31.996007</td>
+<td>1.786</td>
+</tr>
+<tr>
+<td>9</td>
+<td>118.744281<br>31.996007</td>
+<td>118.744280<br>31.996005</td>
+<td>2.010</td>
+</tr>
+<tr>
+<td>10</td>
+<td>118.744280<br>31.996005</td>
+<td>118.744279<br>31.996003</td>
+<td>2.233</td>
+</tr>
+</tbody></table>
+<p>可以看到每转换一次，精度丢失<strong>0.223</strong>米。</p>
+<p>结论：连续转换时会出现精度丢失，但在可接受范围内。</p>
+<h3 id="3-坐标系识别"><a href="#3-坐标系识别" class="headerlink" title="3. 坐标系识别"></a>3. 坐标系识别</h3><h4 id="线性拟合"><a href="#线性拟合" class="headerlink" title="线性拟合"></a>线性拟合</h4><p>由于大桥为简单直线，所以这里采用简单一元线性回归来对应用上报经纬度进行拟合。具体使用<em>Apache Commons Math3</em>中的<code>PolynomialCurveFitter</code>实现。</p>
+<h5 id="密度"><a href="#密度" class="headerlink" title="密度"></a>密度</h5><p>由于选取地形缘故，坐标点有很大的概率落入到地形直线一定范围内（可能在坐标系转换后）。也就是这些范围内的点数要明显高于周围其它范围。造成了明显的高密度区域。这里我们将密度定义为</p>
+<blockquote>
+<p>设选定范围宽为$W$，地形长为$L$，而在选定范围内有$m$个点。则有密度<br>$$<br>D = \frac {m} {2 \times (W+L)}<br>$$<br>又因为$L$在指定地形下是常量，且等分的情况下，$W$也是常量，有<br>$$<br>D \propto  m<br>$$</p>
+</blockquote>
+<p><em>以下使用$m$来指代密度。</em></p>
+<h5 id="密度分布"><a href="#密度分布" class="headerlink" title="密度分布"></a>密度分布</h5><p>以地形直线为中心，将选定区域划分为等长的子区域，计算出各个子区域的密度，最终得到整个选定区域的密度分布情况。其中子区域长度可配置。</p>
+<h5 id="高密度区域"><a href="#高密度区域" class="headerlink" title="高密度区域"></a>高密度区域</h5><p>对于非地形区域，噪音点可以看做随机分布。由于地形区域密度显著高于其它区域，这里通过应用（单边）切比雪夫不等式，来进行高密度区域选取。计算出平均密度$\overline {\sigma}$和密度标准差$\overline {\mu}$，如果区域的密度高于$\overline {\sigma} + \lambda \cdot \overline{\mu}$ ，则认为该区域为所谓的高密度区域。如果坐标系合适，那么地形直线所在区域往往是高密度区域。其中$\lambda$为可配置系数。</p>
+<h5 id="拟合确认"><a href="#拟合确认" class="headerlink" title="拟合确认"></a>拟合确认</h5><p>确定地形直线所在区域为高密度区域后，尝试进行线性拟合，并计算偏差距离。如果在可接受范围内，则可以确认坐标系。否则，确认失败。这里主要验证区域内坐标点是否沿地形分布，避免出现聚集而误判。</p>
+<h4 id="偏差度量"><a href="#偏差度量" class="headerlink" title="偏差度量"></a>偏差度量</h4><p>为了测试拟合后的直线和大桥直线重合程度，这里通过<code>两端平均偏差距离</code>来衡量。</p>
+<blockquote>
+<p>所谓两端平均偏差距离是指拟合后的直线与矩形区域两个边（比如上面的$L_{bc}$和$L_{ad}$）的两个交点（$C_{bc}, C_{ad}$）分别与地形直线端点$x_1, x_2$之间距离的平均值，即$\frac {Distance(C_{bc}, x_2) - Distance(C_{ad}, x_1)} {2}$</p>
+</blockquote>
+<p>两端平均偏差距离越小说明重合程度越好，具体可通过阈值来控制可接受偏差程度。</p>
+<p>其中直线交点使用<em>Apache Commons Math3</em>中的<code>DecompositionSolver</code>实现，交点之间的距离计算可参考“经纬度到距离”章节。</p>
+<h4 id="坐标系猜测"><a href="#坐标系猜测" class="headerlink" title="坐标系猜测"></a>坐标系猜测</h4><p>当线性拟合结果和大桥之间的偏差距离过大（默认可接受偏差为50米），需要对拟合的坐标进行坐标系转换。由于不确定坐标系，因此采用以下顺序进行转换尝试：</p>
+<ul>
+<li>GCJ-02到BD-09</li>
+<li>WGS-84到BD-09</li>
+</ul>
+<p>并将转换后的结果，再次计算偏差距离。验证偏差是否在可接受范围内。如果多次尝试后，依然无法满足，则枚举猜测失败。</p>
+<h3 id="4-多地形识别"><a href="#4-多地形识别" class="headerlink" title="4. 多地形识别"></a>4. 多地形识别</h3><p>为了解决单个地形数据局限性导致的部分应用由于数据太少，导致无法识别。这里引入多地形识别，即同时选取多个地形进行判断，识别结果为多个地形投票结果。</p>
+<h2 id="三、结论"><a href="#三、结论" class="headerlink" title="三、结论"></a>三、结论</h2><h3 id="1-方法可用性"><a href="#1-方法可用性" class="headerlink" title="1. 方法可用性"></a>1. 方法可用性</h3><p>通过测试发现，本方法识别性能良好，并且受噪音影响较小。特别地，通过多地形识别，有效地提高了识别率。</p>
+<h3 id="2-方法局限性"><a href="#2-方法局限性" class="headerlink" title="2. 方法局限性"></a>2. 方法局限性</h3><ul>
+<li>由于通过特殊地形方只选取了极少部分数据，数据覆盖不全。只能判断应用上报数据的坐标系包含某某坐标系，而不能确认应用上报数据只包含某某坐标系</li>
+<li>同样由于通过特殊地形只选取了极少部分数据，会出现坐标系无法判断的情况</li>
+</ul>
+<h3 id="3-关于坐标系"><a href="#3-关于坐标系" class="headerlink" title="3. 关于坐标系"></a>3. 关于坐标系</h3><p>从实际数据中发现，在某些小区域范围内的WGS84和GCJ02之间的偏移很小，导致误识别的发生。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    John Tse
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://johntse.dev/2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/" title="如何识别定位信息中的坐标系">https://johntse.dev/2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="../../../../tags/algorithm/" rel="tag"># algorithm</a>
+          
+            <a href="../../../../tags/lbs/" rel="tag"># lbs</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="../../../06/09/big-data-engineer-job-requirements/" rel="next" title="大数据工程师能力指南">
+                <i class="fa fa-chevron-left"></i> 大数据工程师能力指南
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="../../../../2019/07/22/a-index-for-data-query-design-and-implementation/" rel="prev" title="一次数据查询设计实现始末">
+                一次数据查询设计实现始末 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="https://avatars2.githubusercontent.com/u/3964478?v=3&s=460" alt="John Tse">
+          <p class="site-author-name" itemprop="name">John Tse</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="../../../../archives/">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/NeoTse" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/JohnTseCN" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                    
+                      Twitter
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="../../../../images/cc-by-nc-sa.svg" alt="Creative Commons">
+            </a>
+          </div>
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、特殊地形选取"><span class="nav-text">一、特殊地形选取</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-相关计算公式"><span class="nav-text">1. 相关计算公式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#经纬度到距离"><span class="nav-text">经纬度到距离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方位角计算"><span class="nav-text">方位角计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#距离到经纬度"><span class="nav-text">距离到经纬度</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-区域范围确定"><span class="nav-text">2. 区域范围确定</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#范围划定"><span class="nav-text">范围划定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#范围坐标"><span class="nav-text">范围坐标</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#地形两端坐标点"><span class="nav-text">地形两端坐标点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#矩形的四个断点的坐标点"><span class="nav-text">矩形的四个断点的坐标点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#区域图示"><span class="nav-text">区域图示</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-区域数学描述"><span class="nav-text">3. 区域数学描述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#描述方式"><span class="nav-text">描述方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#直线方程"><span class="nav-text">直线方程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#大桥的直线方程"><span class="nav-text">大桥的直线方程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#矩形四条边的直线方程"><span class="nav-text">矩形四条边的直线方程</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#区域图示-1"><span class="nav-text">区域图示</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-坐标范围数据筛选"><span class="nav-text">4. 坐标范围数据筛选</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-关于区域选择"><span class="nav-text">5. 关于区域选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-特殊地形持久化表示"><span class="nav-text">6. 特殊地形持久化表示</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、坐标系分析"><span class="nav-text">二、坐标系分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-坐标系"><span class="nav-text">1. 坐标系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-坐标系转换"><span class="nav-text">2. 坐标系转换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#WGS-84-与-GCJ-02"><span class="nav-text">WGS-84 与 GCJ-02</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GCJ-02-与-BD-09"><span class="nav-text">GCJ-02 与 BD-09</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#转换精度测试"><span class="nav-text">转换精度测试</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#与大厂提供的接口比较"><span class="nav-text">与大厂提供的接口比较</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#连续转换时的精度变化"><span class="nav-text">连续转换时的精度变化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-坐标系识别"><span class="nav-text">3. 坐标系识别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#线性拟合"><span class="nav-text">线性拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#密度"><span class="nav-text">密度</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#密度分布"><span class="nav-text">密度分布</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#高密度区域"><span class="nav-text">高密度区域</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#拟合确认"><span class="nav-text">拟合确认</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#偏差度量"><span class="nav-text">偏差度量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#坐标系猜测"><span class="nav-text">坐标系猜测</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-多地形识别"><span class="nav-text">4. 多地形识别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、结论"><span class="nav-text">三、结论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-方法可用性"><span class="nav-text">1. 方法可用性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-方法局限性"><span class="nav-text">2. 方法局限性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-关于坐标系"><span class="nav-text">3. 关于坐标系</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2019 &mdash; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Tse</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">
+      46k
+    </span>
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Mist
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/fastclick/1.0.6/fastclick.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.lazyload/1.9.3/jquery.lazyload.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/velocity/1.2.3/velocity.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/velocity/1.2.3/velocity.ui.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://johntse.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://johntse.dev/2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/';
+          this.page.identifier = '2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/';
+          this.page.title = '如何识别定位信息中的坐标系';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://johntse.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('-1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+  <script type="text/javascript" src="../../../../js/src/js.cookie.js?v=5.1.2"></script>
+  <script type="text/javascript" src="../../../../js/src/scroll-cookie.js?v=5.1.2"></script>
+
+
+  
+
+</body>
+</html>
