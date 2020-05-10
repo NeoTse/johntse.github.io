@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link href="https://cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+  
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="hadoop,big data,algorithm,database,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="这篇文章是本人在接触大数据过程中，对一些原理、概念以及当前常用实现技术的笔记和总结。本人接触大数据不深，实践不多，见识不广，如果错误或者偏颇之处，欢迎斧正。 未完待续">
+<meta name="keywords" content="hadoop,big data,algorithm,database">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Thinking in Bigdata">
+<meta property="og:url" content="https://johntse.me/2016/10/09/thinking-in-bigdata/index.html">
+<meta property="og:site_name" content="敏思·践行">
+<meta property="og:description" content="这篇文章是本人在接触大数据过程中，对一些原理、概念以及当前常用实现技术的笔记和总结。本人接触大数据不深，实践不多，见识不广，如果错误或者偏颇之处，欢迎斧正。 未完待续">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://johntse.me/2016/10/09/thinking-in-bigdata/computer_storage.png">
+<meta property="og:image" content="https://johntse.me/2016/10/09/thinking-in-bigdata/RDBMS_structure.png">
+<meta property="og:image" content="https://johntse.me/2016/10/09/thinking-in-bigdata/Hilbert_InfoGrowth.png">
+<meta property="og:image" content="https://johntse.me/2016/10/09/thinking-in-bigdata/CAP.png">
+<meta property="og:image" content="https://johntse.me/2016/10/09/thinking-in-bigdata/Moores_Law.png">
+<meta property="og:image" content="https://johntse.me/2016/10/09/thinking-in-bigdata/Linerization.png">
+<meta property="og:updated_time" content="2020-05-10T05:14:12.981Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Thinking in Bigdata">
+<meta name="twitter:description" content="这篇文章是本人在接触大数据过程中，对一些原理、概念以及当前常用实现技术的笔记和总结。本人接触大数据不深，实践不多，见识不广，如果错误或者偏颇之处，欢迎斧正。 未完待续">
+<meta name="twitter:image" content="https://johntse.me/2016/10/09/thinking-in-bigdata/computer_storage.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"hide","offset":12,"offset_float":12,"b2t":false,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://johntse.me/2016/10/09/thinking-in-bigdata/">
+
+
+
+
+
+  <title>Thinking in Bigdata | 敏思·践行</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">敏思·践行</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">有关思维、技术和生活的絮叨</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://johntse.me">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Tse">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars2.githubusercontent.com/u/3964478?v=3&s=460">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="敏思·践行">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Thinking in Bigdata</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-09T08:44:57+08:00">
+                2016-10-09
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2020-05-10T13:14:12+08:00">
+                2020-05-10
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../../../categories/big-data/" itemprop="url" rel="index">
+                    <span itemprop="name">big data</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../../../categories/big-data/thinking/" itemprop="url" rel="index">
+                    <span itemprop="name">thinking</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/10/09/thinking-in-bigdata/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  11.5k 字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  41 分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这篇文章是本人在接触大数据过程中，对一些原理、概念以及当前常用实现技术的笔记和总结。本人接触大数据不深，实践不多，见识不广，如果错误或者偏颇之处，欢迎斧正。</p>
+<p><em>未完待续</em></p>
+<a id="more"></a>
+
+<h2 id="一、-引言"><a href="#一、-引言" class="headerlink" title="一、 引言"></a>一、 引言</h2><p>这篇文章是本人在接触大数据过程中，对一些原理、概念以及当前常用实现技术的笔记和总结。本人接触大数据不深，实践不多，见识不广，如果错误或者偏颇之处，欢迎斧正。</p>
+<h2 id="二、-数据"><a href="#二、-数据" class="headerlink" title="二、 数据"></a>二、 数据</h2><p>数据伴随着人类文明出现和发展，同样计算的需求一直存在，从结绳记事到算盘，从差分机到现代计算机的诞生无不是用来更好地处理数据的。然而计算资源始终是有限的，这就决定了计算的过程必定是迭代进行的，中间结果和未使用数据都需要存放在特定的介质上。</p>
+<p>数据存放的介质从竹简到纸张，从磁带到高速缓存，存放的容量和存取速度不断演变。同样由于资源的有限性，在现代计算机上，需要面临容量和速度的取舍。下面是现代计算机的存储体系（冯·洛伊曼体系）：</p>
+<img src="/2016/10/09/thinking-in-bigdata/computer_storage.png" title="computer_storage">
+
+<p>这里可以看到容量和速度存在<strong>反比</strong>关系。为了提高计算速度，数据存放介质的存取速度当然越快越好，但受容量的限制大部分数据都被存放在存取速度一般或者很慢的介质上，即绝大部分数据往往存放在离CPU较远的地方。而计算时往往需要在那些存取速度较慢的介质上搜索所需要的数据，或者更新数据到这些介质。一方面，这些介质本身访问速度慢；另一方面，其上存储数据量较大，进一步降低了定位数据的速度。</p>
+<p>早期，数据量不大结构简单的情况下，人们简单地使用操作系统的文件系统来管理存储数据的文件，实现数据的管理工作。但随着数据量增大，结构复杂化，一些问题逐渐显现：</p>
+<ul>
+<li>随着数据量增大，如何提高搜索速度</li>
+<li>写入数据时，如何确保写入一定是成功的</li>
+<li>多个人同时操作同一个数据造成的并发控制问题</li>
+<li>相同数据重复存储，更新不一致的问题</li>
+<li>通过程序直接操作数据时，发生异常时，数据状态变得不确定</li>
+<li>数据需要能被所有人看到吗，要不要权限控制</li>
+<li>…</li>
+</ul>
+<p>为了解决这些问题，人们通过构建专门的数据库管理系统(DBMS，在不产生歧义的情况下，下面一律使用”数据库”来代替)来进行数据的管理和维护。同样地，这些系统也随着时代不断演变着。</p>
+<h3 id="1-数据存储"><a href="#1-数据存储" class="headerlink" title="1. 数据存储"></a>1. 数据存储</h3><blockquote>
+<p>此处直接从关系型数据库说起，感兴趣的可以参考数据库的维基百科词条<a href="https://en.wikipedia.org/wiki/Database" target="_blank" rel="noopener"><strong>https://en.wikipedia.org/wiki/Database</strong></a></p>
+</blockquote>
+<h4 id="关系型数据库"><a href="#关系型数据库" class="headerlink" title="关系型数据库"></a>关系型数据库</h4><p>这里得提一下关系型数据库的奠基人英国计算机科学家——<strong>埃德加·科德</strong>(老爷子在2003年4月18日因心脏病去世，<strong>R.I.P</strong>)在上个世纪70年代提出的关系模型以及著名的科德十二定律：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">1. 准则0：基本准则。一个关系型数据库系统必须能完全通过它的关系能力来管理数据库</span><br><span class="line">2. 准则1：信息准则。关系数据库的所有信息都应该在逻辑级别上用表中的值这一个方式显式地来表示</span><br><span class="line">3. 准则2：保证访问准则。依靠表名、主码和列名的组合，保证能以逻辑方式访问关系型数据库中的每个数据项</span><br><span class="line">4. 准则3：空值的系统化处理准则。全关系的关系数据库系统支持空值的概念，并用系统化的方法处理空值</span><br><span class="line">5. 准则4：基于关系模型的动态联机数据字典。数据库的描述在逻辑上和普通数据采用同样的表达方式，这样可以使用同样的关系语音进行解释</span><br><span class="line">6. 准则5：统一的数据子语言准则。一个关系数据库系统可以具有几种语言和多种终端访问方式</span><br><span class="line">   但必须有一种语言，它的语句可以表示为严格语法规定和字符串，并能支持以下事项：</span><br><span class="line">    - 数据定义</span><br><span class="line">    - 视图定义</span><br><span class="line">    - 数据操作(交互式或者程序)</span><br><span class="line">    - 完整性约束</span><br><span class="line">    - 认证</span><br><span class="line">    - 事务边界(开始，提交和回滚)</span><br><span class="line">7. 准则6：视图更新准则。所有理论上可能性的视图也应该允许由系统更新</span><br><span class="line">8. 准则7：高级的插入、修改和删除操作。系统应该对各种操作进行查询优化</span><br><span class="line">9. 准则8：数据的物理独立性。无论数据库的数据在存储表示或者存取方法上作任何变化，应用程序和终端活动都保持逻辑上的不变性</span><br><span class="line">10. 准则9：数据的逻辑独立性。当对基本关系进行理论上信息无损变更时，应用程序和终端活动都保持逻辑上的不变性</span><br><span class="line">11. 准则10：数据完整的独立性。关系数据库的完整性约束条件必须是用数据库语言定义并存储在数据字典中</span><br><span class="line">12. 准则11：分布独立性。关系数据库系统在引入分布数据或者数据重新分布时保持逻辑的不变性</span><br><span class="line">13. 准则12：无破坏准则。如果一个关系数据库系统具有一个低级语言，那么这个低级语言不能违背或者绕过完整性准则</span><br></pre></td></tr></table></figure>
+
+<p>这些准则定义了一个关系型数据库管理系统应该满足什么条件。</p>
+<p>随后，IBM进一步完善他的工作，并促进相关的标准化。其中SQL成为了ANSI和ISO的标准。它是数据库方面最广为人知的概念和工具了，成为了这类数据库的代名词。根据准则，SQL提供了：</p>
+<ul>
+<li><strong>DDL:</strong> 数据定义语言(Data Definition Language)</li>
+<li><strong>DML:</strong> 数据操作语言(Data Manipulation Language)</li>
+<li><strong>DCL:</strong> 数据控制语言(Data Control Language)</li>
+<li><strong>DQL:</strong> 数据查询语言(Data Query Language)</li>
+</ul>
+<p>准则表明一个关系型数据库应该具有ACID特性，即：</p>
+<ul>
+<li><strong>Atomicity:</strong> 原子性</li>
+<li><strong>Consistency:</strong> 一致性</li>
+<li><strong>Isolation:</strong> 隔离性</li>
+<li><strong>Durability:</strong> 持久性</li>
+</ul>
+<p>因为这些特性比较重要，下面做一些说明。</p>
+<p><strong>数据库事务</strong></p>
+<p>数据库事务是数据库管理系统执行过程中的一个逻辑单位，由一个有限的数据库操作序列完成（注意：这个和日常生活中的事务是有区别的。）它是数据库执行的基础。</p>
+<p><strong>原子性</strong></p>
+<p>它要求数据库事务执行要么成功要么失败，不存在部分成功或者失败，即事务要求作为一个整体来执行。也就是意味着事务的不可分割性和不可约性。</p>
+<p><strong>一致性</strong></p>
+<p>它要求数据库事务的执行应该确保数据库状态从一个一致性状态转变为另一个一致性状态。这里的一致性是指所有数据必须满足完整性约束（比如数据类型定义，触发器，主键约束等）。</p>
+<p><strong>隔离性</strong></p>
+<p>它要求多个数据库事务的并发执行时能够得到正确的结果，即要求进行正确的并发控制。</p>
+<p><strong>持久性</strong></p>
+<p>它要求数据库事务一旦执行完毕并提交，就应该永久保存在数据库中。即数据必须记录到非易失性存储上，另一方面，它要求数据库具有错误恢复能力。</p>
+<p>这些特性赋予了关系型数据库很强的数据管理能力，多用户的支持、安全审计、异常恢复等其它特性，使得它成为了使用范围最广影响最深的一类数据库。下面是一个关系型数据库的基本结构：</p>
+<img src="/2016/10/09/thinking-in-bigdata/RDBMS_structure.png" title="RDBMS_structure">
+
+<p>一些常见的关系型数据库：</p>
+<ul>
+<li>商业：Oracle DB, Microsoft SQL Server, DB2, Sybase, …</li>
+<li>开源：MySQL, PostgreSQL, Apache Derby, HSQLDB, H2, …</li>
+</ul>
+<p><em>扩展阅读</em>：</p>
+<ul>
+<li>常见关系型数据库列表：<a href="https://en.wikipedia.org/wiki/List_of_relational_database_management_systems" target="_blank" rel="noopener"><strong>https://en.wikipedia.org/wiki/List_of_relational_database_management_systems</strong></a></li>
+<li>常见关系型数据库列表比较：<a href="https://en.wikipedia.org/wiki/Comparison_of_relational_database_management_systems" target="_blank" rel="noopener"><strong>https://en.wikipedia.org/wiki/Comparison_of_relational_database_management_systems</strong></a></li>
+</ul>
+<p><strong>但辉煌之下，一场危机正在酝酿。</strong></p>
+<p>上个世纪90年代开始，面向对象编程开始兴起。随着越来越多的系统使用OO构建，人们发现将内存中的对象数据持久化到关系型数据库中存在一些障碍，两种模式似乎无法兼容（具体可以参考相应的维基百科词条<a href="https://en.wikipedia.org/wiki/Object-relational_impedance_mismatch" target="_blank" rel="noopener"><strong>https://en.wikipedia.org/wiki/Object-relational_impedance_mismatch</strong></a>）。人们将这种现象称之为<strong>Object-relational impedance mismatch</strong>，即“阻抗失衡”。一些ORM工具和框架被创造出来，试图解决这些问题。</p>
+<p>另一方面，随着互联网快速发展，数据的量和形式都空前的大。加上昂贵的授权和维护费用，使得越来越多的企业开始寻求性价比更高的解决方案。</p>
+<img src="/2016/10/09/thinking-in-bigdata/Hilbert_InfoGrowth.png" title="Hilbert_InfoGrowth">
+
+<p>随着时代的发展，数据产生场景不断发生变化，数据格式形态也变得越来越丰富。从结构化的角度大致可以分为：</p>
+<ul>
+<li>结构化数据：有明确的结构定义，且结构稳定良好的数据。比如，常见的关系型数据库存储的数据</li>
+<li>半结构化数据：有一定的结构，但结构易变的数据。比如，HTML，XML，JSON类数据</li>
+<li>非结构化数据：没有明确的结构定义或者不易结构化的数据，比如图片、文本、音频、视频等</li>
+</ul>
+<p>大数据时代来临了，但现有的关系型数据库在可扩展性方面出奇的差，面对数据量不断增长(特别是半结构化和非结构化数据的增长)的需求和硬件技术发展的瓶颈，现有的关系型数据库已经力不从心了。</p>
+<p>不可否认的是，关系型数据库依然是目前应用最广的数据库，在处理中小数据的时候仍然是优先考虑的选择。</p>
+<h4 id="NoSQL数据库"><a href="#NoSQL数据库" class="headerlink" title="NoSQL数据库"></a>NoSQL数据库</h4><p>首先，对于<strong>NoSQL</strong>这个词并没有一个权威的定义，你可以理解为”non sql”, “non relational”或者”not only sql”。它不是指一种特定的技术或者数据模型，而是对有别于关系型数据库的那类数据库的总称。这些NoSQL数据库的诞生不仅弥补之前关系型数据库的可扩展性问题，而且提高了一些新的数据存储方式。</p>
+<p>NoSQL数据库由于采用聚合形式的数据存储，可以很方便地进行数据分布，因此都采用了横向扩展。一般可以通过两种途径实现数据分布化：</p>
+<ul>
+<li><strong>sharding:</strong> 实现了数据分片，提高了数据存储容量，提高了数据的可用性，但一致性下降</li>
+<li><strong>replication:</strong> 实现了数据的复制，提高了数据的读取性能和系统的健壮性。一般有良好的一致性，但可用性下降。</li>
+</ul>
+<p>这两种技术相铺相成，即它们是正交的。使用时，比较灵活，可以根据具体情况和要求搭配使用。常见的做法有：</p>
+<ul>
+<li>单机</li>
+<li>分片</li>
+<li>主从复制</li>
+<li>对等复制</li>
+<li>分片和复制混合</li>
+</ul>
+<h5 id="有哪些NoSQL数据库"><a href="#有哪些NoSQL数据库" class="headerlink" title="有哪些NoSQL数据库"></a><strong>有哪些NoSQL数据库</strong></h5><p>NoSQL数据库最大的特点就是放弃了关系模型中的元组结构，采用了另外一些宽松的，结构更加复杂的结构。根据这些结构的不同可以将这些数据库分为：</p>
+<ul>
+<li>键值数据库：Redis, Riak, Memcached(及其变种), Berkeley DB, Amazon DynamoDB， Google LevelDB</li>
+<li>文档数据库：MongoDB, CouchDB, Terrastore</li>
+<li>列族数据库：HBase, Cassandra, Amazon SimpleDB</li>
+</ul>
+<p>这些数据库操作数据所用的基本单位不再是元组，而是各自定义的复杂结构（可以称之为聚合）。这种数据的存储方式使得特定情况下，由于不需要额外的JOIN过程，数据的获取变得很高效。另外，他们是无模式的，不需要事先定义结构，可自由添加字段，这对于处理半结构化或者非结构化数据非常有用。</p>
+<p>还有一类数据库提供了另外一种数据模型</p>
+<ul>
+<li>图数据库：Neo4j, Infinite Graph, OrientDB, FlockDB</li>
+</ul>
+<p>其他的还有比如对象型数据库，基于云的数据库等，具体可以参考相应的维基百科词条<a href="https://en.wikipedia.org/wiki/NoSQL" target="_blank" rel="noopener"><strong>https://en.wikipedia.org/wiki/NoSQL</strong></a></p>
+<h4 id="这些NoSQL数据库什么时候用"><a href="#这些NoSQL数据库什么时候用" class="headerlink" title="这些NoSQL数据库什么时候用"></a><strong>这些NoSQL数据库什么时候用</strong></h4><p>由于CAP约束的存在，各个数据库在实现上面临着取舍，各自专注的领域有所区别。下面介绍一下各种NoSQL数据库的常见的应用场景：</p>
+<img src="/2016/10/09/thinking-in-bigdata/CAP.png" title="CAP">
+
+<p><em>关于一致性和可用性的更多讨论将在下一章详细说明。</em></p>
+<p><strong>键值对类型</strong></p>
+<p>键值对顾名思义其数据存储采用键值形式进行。用户可以根据键来查询、设置或者删除对应的值，这个和编程中经常使用的HashMap类似，区别在于这里的值对于数据库而言只是一块数据，其格式和结构可以不一致的，即数据库不关心存储在值中的内容。这个需要应用程序负责解释。还有一些键值数据库(比如Redis)支持范围查询，集合操作等。</p>
+<p>目前使用较多或者市场份额加大的有：Riak，Redis和Memcached DB。下面以这些数据库为例做一下说明：</p>
+<p>先对这些数据库做一下简介</p>
+<ol>
+<li><strong>Redis:</strong> 是一个开源的(基于BSD协议)、支持网络、基于内存的键值对存储(又称为数据结构存储)，使用ANSI-C实现。其中值支持丰富的数据结构(string, list, set , hash tables…)，可用作数据库、缓存或者消息代理。支持分片、事务、LRU缓存、Lua脚本和不同级别的磁盘持久化。通过<code>Redis Sentinel</code>提供高可用性，使用<code>Redis Cluster</code>来实现集群管理。它是目前最流行的键值对存储数据库。官方网站：<a href="https://redis.io" target="_blank" rel="noopener"><strong>https://redis.io</strong></a></li>
+<li><strong>Riak:</strong> 是具有高可用性、容错强、操作简单及扩展性特点的一个分布式键值对数据库。使用Erlang语言实现，它是<code>Amazon Dynamo</code>的开源实现。支持数据分片和集群部署。官方网站：<a href="http://basho.com/products/" target="_blank" rel="noopener"><strong>http://basho.com/products/</strong></a></li>
+<li><strong>Memcached:</strong> 是一个开源的(基于BSD协议)高速缓存系统。它使用C语言实现。其API使用哈希算法计算键值后，将数据分散在不同机器的哈希表中。这个表支持LRU的缓存策略。它通常被作为缓存系统使用，尤其对于请求量大或者生成内容成本高的系统有很好的性能提升作用。但是，它缺乏持久化机制，需要额外的代码实现。另外，它缺乏认证和安全管制，所以一般需要放置在安全可信的网络中。另外，<strong>MemcacheDB</strong>和<strong>CouchBase</strong>都是它的变种，它们提供了持久化能力，并且和Memcached具有协议兼容性。官方网站：<a href="https://memcached.org/" target="_blank" rel="noopener"><strong>https://memcached.org/</strong></a></li>
+</ol>
+<p>键值数据库特性：</p>
+<ol>
+<li><strong>一致性</strong></li>
+</ol>
+<p>只有针对单个键的操作才具备强一致性，对于采用分布式的情况，可以提供最终一致性。当然，这边就需要在读取或者写入效率做出取舍。</p>
+<ul>
+<li>Redis: 支持主从复制，支持最终一致性</li>
+</ul>
+<p>键值数据库在做分片时，一般按照键进行，如何生成合适的键来满足分片的需求？</p>
+<blockquote>
+<p>一致性哈希</p>
+</blockquote>
+<ol start="2">
+<li><p><strong>事务</strong></p>
+</li>
+<li><p><strong>查询</strong></p>
+</li>
+<li><p><strong>可扩展性</strong></p>
+</li>
+</ol>
+<p>关于分片</p>
+<p>分片实现方式</p>
+<p>分片的优缺点</p>
+<ol start="5">
+<li><strong>适用案例</strong></li>
+</ol>
+<p>这一类数据库一般采用内存存储策略（所以也可以称之为内存键值数据库），强调高性能。支持各种内存数据结构，对数据结构要求宽松。</p>
+<ul>
+<li>存放用户会话信息</li>
+<li>用户配置信息</li>
+<li>购物车信息</li>
+</ul>
+<ol start="6">
+<li><strong>不适用的场合</strong></li>
+</ol>
+<ul>
+<li>数据间存在关系</li>
+<li>含有多项操作的事务：比如需要同时更新多个键值对</li>
+<li>需要根据值来查询数据：当然我们也可以使用Solr这样的索引引擎来提供检索功能</li>
+<li>集合操作：由于键值数据库一次只能操作一个键，所以它无法操作多个关键字。对于多个关键字，可以在客户端处理</li>
+</ul>
+<p>使用时我们需要注意几点：</p>
+<ul>
+<li>键的选择或者生成</li>
+<li>存储的数据是否重要，能否忍受数据的丢失，是否需要持久化</li>
+<li>使用键查询时，是否存在不知道键的情况。是否需要支持键的搜索</li>
+<li>对一致性的要求怎么样，强一致性还是最终一致性，一致性窗口多大？</li>
+</ul>
+<p>各个键值数据库之间由于关注点和应用差异，存在或多或少的区别。实际应用时，需要根据实际情况和各个数据库官方说明选择合适的数据库和配置。</p>
+<p><strong>文档类型</strong></p>
+<p><strong>列族类型</strong></p>
+<p><strong>图类型</strong></p>
+<p>这个类型比较特殊，它和上面的区别在于其并不是为了解决大数据量的问题</p>
+<p>他们之间更详细的比较可以参考<a href="https://en.wikipedia.org/wiki/Comparsion_of_structured_storage_software" target="_blank" rel="noopener"><strong>https://en.wikipedia.org/wiki/Comparsion_of_structured_storage_software</strong></a>。</p>
+<p>由于NoSQL数据库中大多都能够实现数据的分布化，因此原来的<strong>ACID</strong>特性不再适用，取而代之的是<strong>BASE</strong>。即：</p>
+<ul>
+<li><strong>Basically Available:</strong> 基本可用</li>
+<li><strong>Soft state:</strong> 软状态</li>
+<li><strong>Eventual consistency:</strong> 最终一致性</li>
+</ul>
+<p>可以看出，这里通过牺牲了严格的可用性和一致性，来换取可扩展性。</p>
+<h4 id="NewSQL数据库"><a href="#NewSQL数据库" class="headerlink" title="NewSQL数据库"></a>NewSQL数据库</h4><p>兼顾扩展性和ACID保证的现代关系型数据库</p>
+<ol>
+<li>全新类型的数据库系统<ul>
+<li>Google Spanner</li>
+<li>Clustrix</li>
+<li>VoltDB</li>
+<li>MemSQL</li>
+<li>NuoDB</li>
+<li>…</li>
+</ul>
+</li>
+<li>对数据库引擎进行了优化<ul>
+<li>MySQL Cluster</li>
+<li>TokuDB</li>
+<li>…</li>
+</ul>
+</li>
+</ol>
+<p>这类系统都提供了分片的中间件成，用来对数据库进行分割，以便在多个节点上运行</p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><p>上面我们说得数据库可以都归为结构化存储，他们对于结构化或者部分半结构化数据往往具有较好的管理。但对于非结构化数据就无能为力了，因此亟需一种数据管理系统能够对非结构化数据进行处理。</p>
+<p>Riak支持Solr</p>
+<p>全文检索</p>
+<h3 id="2-数据库的使用模式"><a href="#2-数据库的使用模式" class="headerlink" title="2. 数据库的使用模式"></a>2. 数据库的使用模式</h3><p>数据库屏蔽，服务化<br>交互形式：Rest HTTP,Protobuf，Thrift…</p>
+<p>这是一个螺旋上升的过程，NoSQL本身不是SQL的取代，只是在特定邻域或者场景下的妥协和特化。如何组织数据中的关系是演变的核心。</p>
+<h2 id="三、计算"><a href="#三、计算" class="headerlink" title="三、计算"></a>三、计算</h2><p>操作系统类比</p>
+<p>有时计算复杂度较低，但数据量加大，导致总体计算量大；有时计算复杂度高，数据量不一定大，但计算量同样很大。</p>
+<p>关系型数据库访问方式</p>
+<p>客户端 vs 服务端</p>
+<p>计算模型：</p>
+<p>SISD, SIMD, MISD, MIMD</p>
+<p>并发/并行 vs 分布</p>
+<p>计算伴随着数据的分布化而分布化</p>
+<p>数据索引</p>
+<p>分布式中的算法及其应用场景</p>
+<p>计算场景：</p>
+<ul>
+<li>实时应用：在线系统、实时分析、CEP。可使用的计算框架：Storm, S4, Cloudera Impala, Apache Drill</li>
+<li>交互式应用：可视化、向下钻取、探索、定制化报表。可使用的计算框架：Cloudera Impala, Apache Drill, Shark</li>
+<li>非交互式应用：数据准备、增量式批处理、Dashboard。可使用的计算框架：MapReduce, Hive, Pig, Stinger</li>
+<li>批处理：批处理、数据挖掘。可使用的计算框架：MapReduce, Hive, Pig, Stinger</li>
+</ul>
+<p>作业管理</p>
+<ul>
+<li>Tez</li>
+</ul>
+<h2 id="四、Hadoop家族"><a href="#四、Hadoop家族" class="headerlink" title="四、Hadoop家族"></a>四、Hadoop家族</h2><p>存储</p>
+<p>数据模型</p>
+<p>集群管理</p>
+<p>计算模型</p>
+<p>任务管理</p>
+<h2 id="附录-A"><a href="#附录-A" class="headerlink" title="附录 A."></a>附录 A.</h2><h3 id="1-分布式相关"><a href="#1-分布式相关" class="headerlink" title="1. 分布式相关"></a>1. 分布式相关</h3><p>面对数据量的不断增长，人们需要对现有的系统进行升级扩展以满足需求。这种扩展通常分为两种：</p>
+<ul>
+<li>纵向扩展(scale up)：通过升级CPU、内存、磁盘，甚至机器来获得整体性能提升，达到资源扩充的目的。但这种方式提升有限，且成本较高</li>
+<li>横向扩展(scale out)：通过使用大量廉价的机器组建集群，实现分布式系统，达到资源扩充的目的。但这种方式带来了集群管理的难题</li>
+</ul>
+<p>由于摩尔定律逐渐失效</p>
+<img src="/2016/10/09/thinking-in-bigdata/Moores_Law.png" title="Moores_Law">
+
+<p>单台计算机的性能提升幅度已经不能满足日益增长的数据，且成本高昂。因此横向扩展成了眼下可行的选择。特别是Google发表的《三大论文》，使得<strong>分布式计算</strong>的概念开始在互联网应用中盛行。当然，分布式概念本身不是一个新事物。比如因特网本身就是一个成功的巨型分布式应用，其它的还有DHT(分布式散列表，大家比较熟悉的应用BitTorrent就是基于此)，区块链(这个比较火)。我们这里讲的分布式主要是指用来大规模处理和存储海量数据。</p>
+<p><em>扩展阅读</em>：</p>
+<p>分布式计算维基百科词条：<a href="https://en.wikipedia.org/wiki/Distributed_computing" target="_blank" rel="noopener"><strong>https://en.wikipedia.org/wiki/Distributed_computing</strong></a></p>
+<h4 id="分布式计算中的谬误"><a href="#分布式计算中的谬误" class="headerlink" title="分布式计算中的谬误"></a>分布式计算中的谬误</h4><p>由前Sun公司<code>L. Peter Deutsch</code>和几位核心创始人在1994年提出的，关于分布式应用中新手编程人员经常做的一些错误假设。其中第八点由<code>James Gosling</code>(Java之父)及其他几位Sun的核心人员在1997年补充。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">分布式计算中的谬误</span><br><span class="line"></span><br><span class="line">1. 网络是可靠的</span><br><span class="line">2. 没有延迟</span><br><span class="line">3. 无限带宽</span><br><span class="line">4. 网络是安全的</span><br><span class="line">5. 拓扑是不变的</span><br><span class="line">6. 只有一个管理员</span><br><span class="line">7. 没有传输成本</span><br><span class="line">8. 网络是同质的</span><br></pre></td></tr></table></figure>
+
+<p><strong><a href="https://blogs.oracle.com/jag/resource/Fallacies.html" target="_blank" rel="noopener">https://blogs.oracle.com/jag/resource/Fallacies.html</a></strong></p>
+<p>它表明构建一个健壮的分布式系统不是一件容易的事。</p>
+<h4 id="CAP理论"><a href="#CAP理论" class="headerlink" title="CAP理论"></a>CAP理论</h4><p>加州伯克利大学计算机科学家<code>Eric Brewer</code>首次在1998年提出了著名的<strong>CAP理论</strong>，该理论指出对于一个分布式计算系统不能同时提供以下三种保证：</p>
+<ul>
+<li><strong>Consistency:</strong> 一致性。包括读取一致性，更新一致性。即访问所有节点都会得到同一份最新的数据副本。</li>
+<li><strong>Availability:</strong> 可用性。如果可以和集群中某个节点通信(该节点能够正常通信)，那么该节点就必然能够处理读取及写入操作。即对数据更新具有高可用性</li>
+<li><strong>Partition tolerance:</strong> 分区容忍性。如果发生通信故障，导致整个集群分割成多个无法互相通信的分区时，集群仍然可以使用。</li>
+</ul>
+<p>根据定理，分布式系统只能满足三项中的两项而不能同时满足全部的三项。这里引用维基百科上的例子简单解释一下：</p>
+<blockquote>
+<p>可以想象两个节点分别处在分区两侧。允许至少一个节点更新状态会导致数据不一致，即丧失了C性质。如果为了保证数据的一致性，将分区一侧的节点设置为不可用，那么又会丧失了A性质。除非两个节点可以互相通信，才能既保证C又能保证A，这又会导致丧失P性质。</p>
+</blockquote>
+<p>这里有一些容易产生误解的地方，说明一下。</p>
+<ol>
+<li>误解一：关于可用性的含义。这里的可用性和通常意义上的定义有所差别。它指出必须能够在可接受的响应时间内进行读取和更新。</li>
+<li>误解二：关于CAP三点的组合问题。这里不是简单的三选二，比如要想构建具备CA的系统，就意味着一旦系统中出现分区，那么所有的节点必须全部停止工作。这个前提是系统实时能够检测到分区是否出现，由于分布式系统的特性(后面会具体讲解)，这个操作几乎是不可能完成的。因此，对于集群来说必须要容忍分区的情况。当分布式系统发生了分区时，必须就当前的操作在C和A之间做出选择。</li>
+</ol>
+<p>当然，所谓的CAP理论并不是一个严格的数学证明，存在比较大的争议。具体落地时，需要根据实际情况去理解。</p>
+<p><em>扩展阅读</em>：</p>
+<ul>
+<li>CAP理论：<a href="https://people.eecs.berkeley.edu/~brewer/cs252b-2004/PODC-keynote.pdf" target="_blank" rel="noopener"><strong>https://people.eecs.berkeley.edu/~brewer/cs252b-2004/PODC-keynote.pdf</strong></a>和<a href="http://www.glassbeam.com/sites/all/themes/glassbeam/images/blog/10.1.1.67.6951.pdf" target="_blank" rel="noopener"><strong>http://www.glassbeam.com/sites/all/themes/glassbeam/images/blog/10.1.1.67.6951.pdf</strong></a></li>
+<li>CAP通俗讲解：<a href="http://ksat.me/a-plain-english-introduction-to-cap-theorem/" target="_blank" rel="noopener"><strong>http://ksat.me/a-plain-english-introduction-to-cap-theorem/</strong></a>和<a href="https://dzone.com/articles/better-explaining-cap-theorem" target="_blank" rel="noopener"><strong>https://dzone.com/articles/better-explaining-cap-theorem</strong></a></li>
+<li>CAP历史：<a href="http://blog.csdn.net/chen77716/article/details/30635543" target="_blank" rel="noopener"><strong>http://blog.csdn.net/chen77716/article/details/30635543</strong></a></li>
+</ul>
+<h4 id="PACELC理论"><a href="#PACELC理论" class="headerlink" title="PACELC理论"></a>PACELC理论</h4><p><strong>PACELC理论</strong>是对之前的CAP理论的一种扩展，由<code>Daniel J. Abadi</code>首次在2010年的博客中提及。该理论指出一个已存在网络分区(Partition)的分布式计算系统，仅能在一致性(Consistency)和可用性(Availability)之间选择一个(即CAP理论), 但是(Else),即使该系统在正常运行不存在分区的情况下，那它也必须在延迟(Latency)和一致性(Consistency)之间做出选择。</p>
+<p>PACELC对分布式系统中潜在的一致性权衡问题，提供了一个更加完整的描述。它说明一个高可用的系统必须实现数据的复制，而一旦分布式系统复制数据，一致性和延迟之间的权衡就会出现。这一点已经从CAP理论的说明中略见端倪。</p>
+<p><em>扩展阅读</em>：</p>
+<ul>
+<li>那篇博客：<a href="http://dbmsmusings.blogspot.ie/2010/04/problems-with-cap-and-yahoos-little.html" target="_blank" rel="noopener"><strong>http://dbmsmusings.blogspot.ie/2010/04/problems-with-cap-and-yahoos-little.html</strong></a></li>
+<li>论文：<a href="http://cs-www.cs.yale.edu/homes/dna/papers/abadi-pacelc.pdf" target="_blank" rel="noopener"><strong>http://cs-www.cs.yale.edu/homes/dna/papers/abadi-pacelc.pdf</strong></a></li>
+</ul>
+<h4 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h4><p><strong>简介</strong></p>
+<p>有过多线程编程经验的人知道，要想维护数据的一致性，同步是必不可少的手段。而在分布式系统中这一情况更加复杂，正如上面谬误中所指出的那样。网络延迟或者故障会导致更新丢失，操作顺序的不一致问题。因此，要想了解分布式系统中的一致性模型，我们就需要先理解其中的时间、事件和顺序问题。</p>
+<p>这里的时间指系统中事件发生的物理时间和逻辑时间。先来解释一下物理世时间，在现实生活中，一个事件的发生不是一瞬间的事情，它应该有一个起始时间和结束时间。由于这个原因，多个事件的在物理时间上就有可能存在重叠，这一点在多线程里面就很常见。</p>
+<p>但是，由于分布式系统的特性，系统中的物理时间很难同步。原因在于信息的传播速度是有极限的，即光速。因此分布式系统中每个节点的时间参考系都是独立的，这就造成物理时间的不同步。也就是说通过物理时间来实现一致性，理论上是不可能的。但是，有时候我们更关心事件的逻辑顺序（比如因果关系），不一定需要怎么严格的一致性。</p>
+<p><code>Lamport Clock</code>是一种用于分辨分布式系统中的事件因果关系的算法，这是一种表达逻辑时间的逻辑时钟。它能够找到所有的历史事件的偏序关系，而且这种关系不仅仅在各自节点的逻辑时间参考系内顺序一致，同时全局上的顺序也是一致的。这个影响了后来很多一致性算法，比如<code>Vector Clock</code>, <code>Paxos</code>, <code>Raft</code>等。</p>
+<p><em>扩展阅读</em>：</p>
+<ul>
+<li>Lamport Clock相关论文《Time, Clock and Ordering of Events in a Distributed System》：<a href="http://amturing.acm.org/p558-lamport.pdf" target="_blank" rel="noopener"><strong>http://amturing.acm.org/p558-lamport.pdf</strong></a></li>
+<li>关于Vector Clock算法：<ul>
+<li>《Why Vector Clocks Are Easy》:<a href="http://basho.com/posts/technical/why-vector-clocks-are-easy/" target="_blank" rel="noopener"><strong>http://basho.com/posts/technical/why-vector-clocks-are-easy/</strong></a></li>
+<li>《Why Vector Clocks Are Hard》:<a href="http://basho.com/posts/technical/why-vector-clocks-are-hard/" target="_blank" rel="noopener"><strong>http://basho.com/posts/technical/why-vector-clocks-are-hard/</strong></a></li>
+</ul>
+</li>
+</ul>
+<p><strong>Replication</strong></p>
+<p>由于分布式系统本身的特性，随着系统的扩展，故障发生率上升以及性能问题。此时我们往往通过数据在多个节点备份方式，称为<code>Replication</code>。这个很容易理解，如果一个节点出现故障，可以迅速切换使用备份节点上复制的数据。由于存在多份复制数据，因此一个处理可以选择最近的副本，甚至就在本地，这有效地提高了性能。复制通常作为一种提高扩展性技术使用。</p>
+<p>但是，复制的副本越多所需要越多的网络带宽，特别是当副本数量远低于使用到的数量时，会造成大量浪费。另外更严重的问题是要在多份副本间维持一致性。这要求读取所有的副本时获取到的值应该相同。更新则要求在进行任何其它操作前，更新所有的副本，不论它操作的是哪个副本，也就是它必须是一个原子性操作。这种使得维持所有副本的一致性代价是高昂的。</p>
+<p>一方面，希望通过复制来解决扩展性问题，提升性能；但是，另一方面，为了保持所有副本的一致性就需要全局同步， 而这又降低了系统性能。甚至，这部分代价可能会高于其所带来的提升。因此，实际应用时，我们往往需要放宽一致性约束。这个也是之前的理论所指出的。</p>
+<p><strong>一致性模型</strong></p>
+<p>这边介绍几种常见的一致性模型：</p>
+<ul>
+<li>严格一致性：它要求读取的数据总是最近写入的数据，不存在更新后两次读取的值不一致的情况。比如说一个节点的数据更改，瞬时被另一个节点所感知，显然这种在分布式系统中是无法实现的。</li>
+<li>顺序一致性：它关心的是事件发生的顺序，包含两个方面<ul>
+<li>事件历史发生顺序在各个处理进程上看是全局一致的。比如有两个进程分别同时处理同一个数据，进程A的处理顺序有B-&gt;A-&gt;C，那么进程B的处理顺序也必须是B-&gt;A-&gt;C，但不要求这些处理过程发生的顺序在物理时间上严格一致。</li>
+<li>单个处理进程的历史事件在全局历史上应该符合程序要求的顺序。比如有两个进程：进程A包含的操作有[1,2,3,4]；进程B包含的操作有[5，6，7，8]。他们执行的时的全局事件历史，可能是[1,5,2,3,6,7,4,8]，或者[1,4,5,6,3,2,8]。其中的[1,5,2,3,6,7,4,8]是符合两个进程中程序要求的顺序，而[1,4,5,6,3,2,8]不符合，因为，进程A中要求[1,2,3,4]，而这里是[1,4,3,2]。</li>
+</ul>
+</li>
+<li>线性一致性：它的一致性要强于顺序一致性，也叫强一致性或者原子一致性。这个是我们现在能够实现的最高级别的一致性模型。它是在前面的一致性模型的基础上加入了对时间顺序的要求，而这个不依赖全局物理时钟。比如：<ul>
+<li><img src="/2016/10/09/thinking-in-bigdata/Linerization.png" title="Linerization"></li>
+</ul>
+</li>
+<li>因果一致性：是一种比顺序一致性要弱的模型，它主要区分了哪些操作是有因果关系的，哪些操作是无关的(而顺序一致性则要求所有的操作都是一致的)。只有存在因果关系的操作才要求所有进程以相同的次序看到，对于无因果关系的，并无次序保证。比如在分布式存储中，对于所有可能存在因果关系的写入操作，其发生的先后顺序对于系统中所有节点来说都是一样。并发写(不存在因果关系)则在不同节点上的执行顺序可能是不同的。</li>
+<li>PRAM/管道一致性：在因果一致性模型上进一步弱化，也就是由一个处理进程完成的写入操作对于其他处理进程来说顺序是保证的。但是不同处理进程的写入操作之间无需保证顺序。</li>
+<li>最终一致性：是一种较弱的一致性模型，也是目前使用最为广泛的一种模型。它保证一个给定数据项在没有新的更新的情况下，更新最终会扩散传播，使得数据达到最终一致性。此时对该数据项所有访问都会返回最新更新的值。也就是说需要容忍读取出的数据是陈旧的。它有以下几个具体实现：<ul>
+<li>单调读一致性：它保证在一次处理中读到的数据总是不旧于上一次读取到的数据。对于分布式系统来讲，这些读取操作可能会访问不同的节点或者数据不同的副本。</li>
+<li>单调写一致性：它保证在一次处理中写入数据完成后才能进行下一次写。对于分布式系统来讲，这些写入操作可能会操作不同的节点，对数据不同的副本，进行写入。</li>
+<li>读不旧于写一致性：它保证在一次处理中读取到的数据，总是不旧于自身上一次写入的数据。即需要保证读写的顺序，在读之前，写入操作必须完成。对于分布式系统来讲，写入和读取操作可能不在同一个节点上，或者针对于数据的不同副本。</li>
+<li>写不旧于读一致性：它保证在一次处理中写入的数据，总是不旧于自身上一次读取的数据。即读取数据后，后续的写入操作需要更新之前读取到的数据。对于分布式系统来讲，写入和读取操作可能不在同一个节点上，或者针对于数据的不同副本。</li>
+</ul>
+</li>
+</ul>
+<p><em>扩展阅读</em>：</p>
+<ul>
+<li>一致性模型维基百科词条：<a href="https://en.wikipedia.org/wiki/Consistency_model" target="_blank" rel="noopener"><strong>https://en.wikipedia.org/wiki/Consistency_model</strong></a></li>
+<li>分布式系统一致性的发展历史（一）：<a href="http://danielw.cn/history-of-distributed-system-1" target="_blank" rel="noopener"><strong>http://danielw.cn/history-of-distributed-system-1</strong></a></li>
+</ul>
+<p><strong>关于不一致</strong></p>
+<p>实际情况中，我们往往需要忍受不一致性来满足可用性要求，那什么是不一致性？我们可以下三个维度来描述不一致性：</p>
+<ul>
+<li>数值偏差：副本中具有数值语义的数据在数值上存在差异，可分为绝对差异和相对差异</li>
+<li>陈旧度偏差：副本中数据的最后更新时间或者次数存在差异</li>
+<li>更新顺序偏差：副本中数据的更新操作顺序存在差异</li>
+</ul>
+<p>一致性模型的强弱可以通过这些偏差大小来反映。</p>
+<h4 id="一致性算法"><a href="#一致性算法" class="headerlink" title="一致性算法"></a>一致性算法</h4><p>在将一致性算法前，我们先来了解一下，这些算法需要解决的问题。</p>
+<p><strong>面临的问题</strong></p>
+<p>首先，说明一下分布式系统中的几个基本概念：</p>
+<p><em>网络模型</em></p>
+<ul>
+<li>同步网络：这里的同步和并发/并行编程中的同步或者同步调用不是一回事。它是指在这个网络中1)所有节点的时钟漂移有上限；2)网络传输时间有上限；3)所有节点的计算速度有一致。这就意味着各个节点是可预测的。然而，现实中是不存在这样的网络的，此模型一般用于理论研究中。</li>
+<li>异步网络：它和同步网络模型相反，1)节点的时钟漂移无上限；2)消息传输延迟无上限；3)节点的计算速度不可预料。这个就是现实中的网络类型了。每个节点状态都是不可预料的。</li>
+</ul>
+<p><em>故障类型</em></p>
+<p>以下给出分布式系统中比较常见故障的分类，这些故障在解决难度上从难到易：</p>
+<ul>
+<li><strong>byzantine failures:</strong> 即拜占庭故障。它指一个节点不会按照程序逻辑执行，对它调用返回的结果是随机或者混乱错误的。要想解决这类问题，需要同步网络，且故障节点必须少于1/3，这个是最广泛最难处理的情况。</li>
+<li><strong>crash-recovery failures:</strong> 相比较之前，此类故障增加了一个限制，即节点总是按照程序逻辑执行，返回的结果是正确的。但是返回时间是不保证的，可能由于网络故障，节点crash了或者网络延迟了。对于crash，还分为健忘或者非健忘的。所谓健忘就是crash恢复后没有完整的保持crash之前的状态信息，非健忘的指这个节点crash之前把完整的状态信息持久化的存储上，恢复后能够根据之前保留的值继续执行。</li>
+<li><strong>omission failures:</strong> 在<code>crash-recovery failuers</code>的基础上，增加了crash必须是非健忘的这一个限制。</li>
+<li><strong>crash-stop failures:</strong> 也称为<code>crash failure</code>或者<code>fail-stop failures</code>，它在<code>omission failures</code>的基础上增加了一旦故障发生后必须停止响应的要求。比如一个节点内部出现故障后立即停止接受和发送所有消息，并且这些故障不会自动恢复。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">拜占庭将军问题：</span><br><span class="line"></span><br><span class="line">拜占庭位于现在土耳其的伊斯坦布尔，是东罗马帝国的首都。由于当时拜占庭罗马帝国国土辽阔，为了防御目的，每个军队都</span><br><span class="line">分隔很远，将军们之间只能通过信差来传递消息。</span><br><span class="line"></span><br><span class="line">在战争的时候，拜占庭军队内所有的将军们必需达成一致的共识，来决定是否有赢得机会后才会攻打敌人。但是，军队中可能</span><br><span class="line">存在叛徒，左右将军们的决定，扰乱军队整体的秩序。在商量共识时，结果可能并不代表大多数人的意见，贸然进攻的话战争</span><br><span class="line">会失败。这个时候，在已知有成员谋反的情况下，其余忠诚的将军在不受叛徒的影响下如何达成一致的协议，拜占庭问题就此产生了。</span><br><span class="line"></span><br><span class="line">该问题可以看作是对现实世界问题的模型化，硬件错误，网络故障或者延迟，或者遭到恶意攻击，都会使得某个计算节点变得</span><br><span class="line">不可靠，也就是那个叛徒。</span><br></pre></td></tr></table></figure>
+
+<p>具体可以查看：<a href="https://zh.wikipedia.org/zh-cn/拜占庭将军问题" target="_blank" rel="noopener">https://zh.wikipedia.org/zh-cn/拜占庭将军问题</a><br>那这些问题，我们是不是都能够解决呢？由于这些问题具有包含涵盖关系，所以如果最难的拜占庭故障能够解决，当然后面的故障类型就能够迎刃而解。</p>
+<p>1985年横空出世的<code>FLP Impossibility</code>定理给出了答案，它指出在有限定条件的异步网络中，只要存在一个故障节点，任何一致性算法都无法保证正确结束。这些限定条件使得该理论的网络模型要比拜占庭故障中的模型要理想合严格很多。如果在这样理想的模型中，一致性问题都无法保证，那么在现实中更宽松的环境中当然更加不可能了。因此，一般我们只对异步且非拜占庭模型进行讨论。</p>
+<p>在分布式系统中的故障是常态的，为了保证系统的稳定性和可用性，就要求系统必须具备<code>fault tolerence</code>。为了获得这种特性，一般采用<strong>replicated state machines</strong>的方法来达到，实际系统中一般使用replicated log作为具体实现。而维护这些log文件的一致性就用到了一致性算法。而一个一致性算法应该具有以下特点：</p>
+<ul>
+<li>它在所有非拜占庭条件下保证safety(不会返回不正确的结果)，所谓非拜占庭条件是指网络延迟，分区以及数据包丢失，重复或者乱序</li>
+<li>它需要保证系统中半数以上的节点完全可用的，包括它们内部之间以及和客户端之间的通信。另外，所有的节点都应该是故障停机的，且是非健忘的，后期恢复后，可以重新加入到集群中。</li>
+<li>算法不依赖具体时间来维持一致性，它主要工作的网络模型为异步的。</li>
+<li>通常情况下，一个命令能够在系统中大多数节点上以单个RPC完成。</li>
+</ul>
+<p>这里提一下safety和liveness这两个特性:</p>
+<ul>
+<li>safety：安全性，它是指在分布式系统中一个变量一旦被决定为某个值比如A，那么就不会再有其他决定来更改这个值</li>
+<li>liveness：活性，它是指分布式系统中一个变量被决定为某个值的过程总是能够成功</li>
+</ul>
+<p>它们是分布式系统算法中的两个死对头，就像之前的一致性和可用性一样，两者是对立的。而且FLP定理指出，在异步网络中是没有完全同时保证safety和liveness的一致性算法。因此，后面我们提到的一致性算法，实现时往往放松了liveness的要求。这些算法可能会进入无限循环，但概率非常非常低。</p>
+<p><em>扩展阅读</em>：</p>
+<ul>
+<li>分布式系统一致性的发展历史（二）：<a href="http://danielw.cn/history-of-distributed-system-2" target="_blank" rel="noopener"><strong>http://danielw.cn/history-of-distributed-system-2</strong></a></li>
+<li>Distributed Systems, Failures, and Consensus：<a href="https://www.cs.duke.edu/courses/fall07/cps212/consensus.pdf" target="_blank" rel="noopener"><strong>https://www.cs.duke.edu/courses/fall07/cps212/consensus.pdf</strong></a></li>
+<li>Consensus维基百科：<a href="https://en.wikipedia.org/wiki/Consensus_(computer_science)" target="_blank" rel="noopener"><strong>https://en.wikipedia.org/wiki/Consensus_(computer_science)</strong></a></li>
+<li>FLP Impossibility：<a href="http://danielw.cn/FLP-proof" target="_blank" rel="noopener"><strong>http://danielw.cn/FLP-proof</strong></a></li>
+</ul>
+<p><strong>Paxos</strong></p>
+<p>首先，这里定义三种角色：</p>
+<ul>
+<li>proposers：负责提出建议值</li>
+<li>acceptors：决定是否接受给定的建议值</li>
+<li>learners：不参与提议和决策过程但需要知道最终结果</li>
+</ul>
+<p>最简单的方式就是一个proposer发送一个候选值到一个acceptor，而该acceptor会选择它接受到的第一个候选值。但是，一旦这个acceptor出现故障，那么后续的处理就不可能了。</p>
+<p>既然一个acceptor不行的话，那我用多个acceptor吧。一个proposer将发送一个候选值发送给这些acceptor，如果被半数以上acceptor收到的话，就将其选为最终结果。当然，这个前提是一个acceptor必须接受其收到的第一个候选值。那如果有多个候选值同时被多个proposer发送，这种情况下就没有办法给出最终结果。因为此时每个候选值得acceptor数可能不过半。</p>
+<p>现在，我们改变一下策略，允许一个acceptor可以接收多个候选值。这里我们给每个候选值赋予一个独一无二的编号，这样每个候选值就由编号和具体值组成。</p>
+<p><em>扩展阅读</em>：</p>
+<ul>
+<li>Paxos算法维基百科：<a href="https://en.wikipedia.org/wiki/Paxos_(computer_science)" target="_blank" rel="noopener"><strong>https://en.wikipedia.org/wiki/Paxos_(computer_science)</strong></a></li>
+<li>Paxos Made Simple：<a href="http://research.microsoft.com/en-us/um/people/lamport/pubs/paxos-simple.pdf" target="_blank" rel="noopener"><strong>http://research.microsoft.com/en-us/um/people/lamport/pubs/paxos-simple.pdf</strong></a></li>
+<li>Paxos通俗讲解：<ul>
+<li><a href="http://drmingdrmer.github.io/tech/distributed/2015/11/11/paxos-slide.html" target="_blank" rel="noopener"><strong>http://drmingdrmer.github.io/tech/distributed/2015/11/11/paxos-slide.html</strong></a></li>
+<li><a href="http://blog.csdn.net/chen77716/article/details/6166675" target="_blank" rel="noopener"><strong>http://blog.csdn.net/chen77716/article/details/6166675</strong></a></li>
+<li><a href="http://blog.csdn.net/chen77716/article/details/6170235" target="_blank" rel="noopener"><strong>http://blog.csdn.net/chen77716/article/details/6170235</strong></a></li>
+<li><a href="http://blog.csdn.net/chen77716/article/details/6172392" target="_blank" rel="noopener"><strong>http://blog.csdn.net/chen77716/article/details/6172392</strong></a></li>
+</ul>
+</li>
+</ul>
+<p><strong>Raft</strong></p>
+<p>具体可参考<a href="https://raft.github.io/" target="_blank" rel="noopener">https://raft.github.io/</a></p>
+<p><em>扩展阅读</em>：</p>
+<ul>
+<li>Raft作者博士论文：<a href="https://ramcloud.stanford.edu/~ongaro/thesis.pdf" target="_blank" rel="noopener"><strong>https://ramcloud.stanford.edu/~ongaro/thesis.pdf</strong></a></li>
+<li>Raft在线演示：<a href="http://thesecretlivesofdata.com/raft/" target="_blank" rel="noopener"><strong>http://thesecretlivesofdata.com/raft/</strong></a></li>
+</ul>
+<p><strong>其它</strong></p>
+<ul>
+<li>ZAB：Zookeeper Atomic Broadcast，是Zookeeper中实现的一致性算法</li>
+<li>ViewStamp：可能是最早实现的一致性算法</li>
+</ul>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li>《NoSQL distilled: A Brief Guide to the Emerging World of Polyglot Persistence》：<a href="https://www.amazon.com/NoSQL-Distilled-Emerging-Polyglot-Persistence/dp/0321826620" target="_blank" rel="noopener"><strong>https://www.amazon.com/NoSQL-Distilled-Emerging-Polyglot-Persistence/dp/0321826620</strong></a></li>
+<li>《Seven Databases in Seven Weeks: A Guide to Modern Databases and the NoSQL Movement》：<a href="https://www.amazon.com/Seven-Databases-Weeks-Modern-Movement/dp/193435691" target="_blank" rel="noopener"><strong>https://www.amazon.com/Seven-Databases-Weeks-Modern-Movement/dp/193435691</strong></a></li>
+<li>《Sams teach yourself SQL in 10 minutes》：<a href="https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073" target="_blank" rel="noopener"><strong>https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073</strong></a></li>
+<li>《Distributed Systems: Principles and Paradigms》：<a href="https://www.amazon.com/Distributed-Systems-Principles-Paradigms-2nd/dp/0132392275" target="_blank" rel="noopener"><strong>https://www.amazon.com/Distributed-Systems-Principles-Paradigms-2nd/dp/0132392275</strong></a></li>
+<li>《Database System Concepts》：<a href="https://www.amazon.com/Database-System-Concepts-Abraham-Silberschatz/dp/0073523321" target="_blank" rel="noopener"><strong>https://www.amazon.com/Database-System-Concepts-Abraham-Silberschatz/dp/0073523321</strong></a></li>
+<li>《Hadoop: The Definitive Guide》：<a href="https://www.amazon.com/Hadoop-Definitive-Guide-Tom-White/dp/1491901632" target="_blank" rel="noopener"><strong>https://www.amazon.com/Hadoop-Definitive-Guide-Tom-White/dp/1491901632</strong></a></li>
+<li>《The Google File System》：<a href="http://research.google.com/archive/gfs-sosp2003.pdf" target="_blank" rel="noopener"><strong>http://research.google.com/archive/gfs-sosp2003.pdf</strong></a></li>
+<li>《MapReduce: Simplified Data Processing on Large Clusters》：<a href="http://research.google.com/archive/mapreduce-osdi04.pdf" target="_blank" rel="noopener"><strong>http://research.google.com/archive/mapreduce-osdi04.pdf</strong></a>(<a href="http://research.google.com/archive/mapreduce-osdi04.pdf" target="_blank" rel="noopener">http://research.google.com/archive/mapreduce-osdi04.pdf</a>)</li>
+<li>《BigTable: A Distributed Storage System for Structured Data》：<a href="http://research.google.com/archive/bigtable-osdi06.pdf" target="_blank" rel="noopener"><strong>http://research.google.com/archive/bigtable-osdi06.pdf</strong></a>(<a href="http://research.google.com/archive/bigtable-osdi06.pdf" target="_blank" rel="noopener">http://research.google.com/archive/bigtable-osdi06.pdf</a>)</li>
+<li>《The Chubby lock service for loosely-coupled ditributed systems》：<a href="http://research.google.com/archive/chubby-osdi06.pdf" target="_blank" rel="noopener"><strong>http://research.google.com/archive/chubby-osdi06.pdf</strong></a>(<a href="http://research.google.com/archive/chubby-osdi06.pdf" target="_blank" rel="noopener">http://research.google.com/archive/chubby-osdi06.pdf</a>)</li>
+<li>《Finding a Needle in Haystack: Facebook’s Photo Storage》：<a href="https://research.facebook.com/publications/finding-a-needle-in-haystack-facebook-s-photo-storage/" target="_blank" rel="noopener"><strong>https://research.facebook.com/publications/finding-a-needle-in-haystack-facebook-s-photo-storage/</strong></a></li>
+<li>《Windows Azure Storage: a highly avaliable cloud storage service with strong consistency》：<a href="https://azure.microsoft.com/zh-cn/blog/sosp-paper-windows-azure-storage-a-highly-available-cloud-storage-service-with-strong-consistency/" target="_blank" rel="noopener"><strong>https://azure.microsoft.com/zh-cn/blog/sosp-paper-windows-azure-storage-a-highly-available-cloud-storage-service-with-strong-consistency/</strong></a></li>
+<li>《GraphLab: A New Framework for Parallel Machine Learning》：<a href="http://www.select.cs.cmu.edu/publications/paperdir/fuai2010-low-gonzalez-kyrola-bickson-guestrin-hellerstein.pdf" target="_blank" rel="noopener"><strong>http://www.select.cs.cmu.edu/publications/paperdir/fuai2010-low-gonzalez-kyrola-bickson-guestrin-hellerstein.pdf</strong></a></li>
+<li>《Resilient Distriubted Datasets: A Fault-Tolerent Abstraction for In-memory Cluster Computing》：<a href="http://www-bcf.usc.edu/~minlanyu/teach/csci599-fall12/papers/nsdi_spark.pdf" target="_blank" rel="noopener"><strong>http://www-bcf.usc.edu/~minlanyu/teach/csci599-fall12/papers/nsdi_spark.pdf</strong></a></li>
+<li>《Scaling Distributed Machine Learning with the Parameter Server》：<a href="https://www.cs.cmu.edu/~muli/file/parameter_server_osdi14.pdf" target="_blank" rel="noopener"><strong>https://www.cs.cmu.edu/~muli/file/parameter_server_osdi14.pdf</strong></a></li>
+<li>《Dremel: Interative Analysis of Web-Scale Datasets》：<a href="https://research.google.com/pubs/archive/36632.pdf" target="_blank" rel="noopener"><strong>https://research.google.com/pubs/archive/36632.pdf</strong></a></li>
+<li>《Pregel: a system for large-scale graph processing》：<a href="https://www.cs.cmu.edu/~pavlo/courses/fall2013/static/papers/p135-malewicz.pdf" target="_blank" rel="noopener"><strong>https://www.cs.cmu.edu/~pavlo/courses/fall2013/static/papers/p135-malewicz.pdf</strong></a></li>
+<li>《Spanner: Google’s Globally-Distributed Database》：<a href="http://research.google.com/archive/spanner-osdi2012.pdf" target="_blank" rel="noopener"><strong>http://research.google.com/archive/spanner-osdi2012.pdf</strong></a></li>
+<li>《Dynamo: Amazon’s Highly Available Key-Value Store》：<a href="http://s3.amazonaws.com/AllThingsDistributed/sosp/amazon-dynamo-sosp2007.pdf" target="_blank" rel="noopener"><strong>http://s3.amazonaws.com/AllThingsDistributed/sosp/amazon-dynamo-sosp2007.pdf</strong></a></li>
+<li>《S4: Distributed Stream Computing Platform》：<a href="http://cs.brown.edu/~debrabant/cis570-website/papers/s4.pdf" target="_blank" rel="noopener"><strong>http://cs.brown.edu/~debrabant/cis570-website/papers/s4.pdf</strong></a></li>
+<li>《Storm @Twitter》：<a href="http://cs.brown.edu/courses/csci2270/archives/2015/papers/ss-storm.pdf" target="_blank" rel="noopener"><strong>http://cs.brown.edu/courses/csci2270/archives/2015/papers/ss-storm.pdf</strong></a></li>
+<li>更多请参考：<ul>
+<li><a href="https://www.linkedin.com/pulse/100-open-source-big-data-architecture-papers-anil-madan" target="_blank" rel="noopener"><strong>https://www.linkedin.com/pulse/100-open-source-big-data-architecture-papers-anil-madan</strong></a></li>
+<li><a href="http://www.dataguru.cn/article-9003-1.html" target="_blank" rel="noopener"><strong>http://www.dataguru.cn/article-9003-1.html</strong></a></li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    John Tse
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://johntse.me/2016/10/09/thinking-in-bigdata/" title="Thinking in Bigdata">https://johntse.me/2016/10/09/thinking-in-bigdata/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="../../../../tags/hadoop/" rel="tag"># hadoop</a>
+          
+            <a href="../../../../tags/big-data/" rel="tag"># big data</a>
+          
+            <a href="../../../../tags/algorithm/" rel="tag"># algorithm</a>
+          
+            <a href="../../../../tags/database/" rel="tag"># database</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="../../../../2019/07/22/a-index-for-data-query-design-and-implementation/" rel="prev" title="一次数据查询设计实现始末">
+                一次数据查询设计实现始末 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="https://avatars2.githubusercontent.com/u/3964478?v=3&s=460" alt="John Tse">
+          <p class="site-author-name" itemprop="name">John Tse</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="../../../../archives/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/NeoTse" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/JohnTseCN" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                    
+                      Twitter
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="../../../../images/cc-by-nc-sa.svg" alt="Creative Commons">
+            </a>
+          </div>
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、-引言"><span class="nav-text">一、 引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、-数据"><span class="nav-text">二、 数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-数据存储"><span class="nav-text">1. 数据存储</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#关系型数据库"><span class="nav-text">关系型数据库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NoSQL数据库"><span class="nav-text">NoSQL数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#有哪些NoSQL数据库"><span class="nav-text">有哪些NoSQL数据库</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#这些NoSQL数据库什么时候用"><span class="nav-text">这些NoSQL数据库什么时候用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NewSQL数据库"><span class="nav-text">NewSQL数据库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其他"><span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-数据库的使用模式"><span class="nav-text">2. 数据库的使用模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、计算"><span class="nav-text">三、计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、Hadoop家族"><span class="nav-text">四、Hadoop家族</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附录-A"><span class="nav-text">附录 A.</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-分布式相关"><span class="nav-text">1. 分布式相关</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式计算中的谬误"><span class="nav-text">分布式计算中的谬误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CAP理论"><span class="nav-text">CAP理论</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PACELC理论"><span class="nav-text">PACELC理论</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一致性"><span class="nav-text">一致性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一致性算法"><span class="nav-text">一致性算法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#延伸阅读"><span class="nav-text">延伸阅读</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2019 &mdash; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Tse</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">
+      29.8k
+    </span>
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Mist
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/fastclick/1.0.6/fastclick.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.lazyload/1.9.3/jquery.lazyload.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/velocity/1.2.3/velocity.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/velocity/1.2.3/velocity.ui.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://johntse.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://johntse.me/2016/10/09/thinking-in-bigdata/';
+          this.page.identifier = '2016/10/09/thinking-in-bigdata/';
+          this.page.title = 'Thinking in Bigdata';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://johntse.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('-1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+  <script type="text/javascript" src="../../../../js/src/js.cookie.js?v=5.1.2"></script>
+  <script type="text/javascript" src="../../../../js/src/scroll-cookie.js?v=5.1.2"></script>
+
+
+  
+
+</body>
+</html>
