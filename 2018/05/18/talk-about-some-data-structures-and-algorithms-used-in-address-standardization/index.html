@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link href="https://cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+  
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="data structure,algorithm,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="地址标准化在数据处理过程中算是一个比较常见的需求，这里说说个人在地址标准化过程中的一些实现思路和算法，抛砖引玉。">
+<meta name="keywords" content="data structure,algorithm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="说说地址标准化过程中使用的一些数据结构和算法">
+<meta property="og:url" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/index.html">
+<meta property="og:site_name" content="敏思·践行">
+<meta property="og:description" content="地址标准化在数据处理过程中算是一个比较常见的需求，这里说说个人在地址标准化过程中的一些实现思路和算法，抛砖引玉。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/Trie_example.png">
+<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/ac.png">
+<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/match_test.png">
+<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/POI_check_test.png">
+<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/wtf.png">
+<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/DFAexample.png">
+<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/address_model.png">
+<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/bitset.png">
+<meta property="og:updated_time" content="2020-05-10T06:16:39.094Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="说说地址标准化过程中使用的一些数据结构和算法">
+<meta name="twitter:description" content="地址标准化在数据处理过程中算是一个比较常见的需求，这里说说个人在地址标准化过程中的一些实现思路和算法，抛砖引玉。">
+<meta name="twitter:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/Trie_example.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"hide","offset":12,"offset_float":12,"b2t":false,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/">
+
+
+
+
+
+  <title>说说地址标准化过程中使用的一些数据结构和算法 | 敏思·践行</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">敏思·践行</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">有关思维、技术和生活的絮叨</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://johntse.dev">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Tse">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars2.githubusercontent.com/u/3964478?v=3&s=460">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="敏思·践行">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">说说地址标准化过程中使用的一些数据结构和算法</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-18T13:40:38+08:00">
+                2018-05-18
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2020-05-10T14:16:39+08:00">
+                2020-05-10
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="../../../../categories/engineering/" itemprop="url" rel="index">
+                    <span itemprop="name">engineering</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  7.1k 字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  29 分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>地址标准化在数据处理过程中算是一个比较常见的需求，这里说说个人在地址标准化过程中的一些实现思路和算法，抛砖引玉。</p>
+<a id="more"></a>
+
+<h2 id="字典分词"><a href="#字典分词" class="headerlink" title="字典分词"></a>字典分词</h2><p>地址主题库构建过程中需要通过分词来对地址做进一步的处理，目前使用的是字典分词，其可以理解为关键词匹配问题。</p>
+<h3 id="单个关键词匹配"><a href="#单个关键词匹配" class="headerlink" title="单个关键词匹配"></a>单个关键词匹配</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">String keyword = <span class="string">"南京"</span>;</span><br><span class="line">String content = <span class="string">"南京市鼓楼区南京大学"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span> (start &lt; content.length() &amp;&amp; index &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> ((index = content.indexOf(keyword, start)) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">    System.out.println(content.substring(start, index));</span><br><span class="line">    start += index;</span><br><span class="line">    System.out.println(keyword);</span><br><span class="line">    start += keyword.length();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">System.out.println(content.substring(start));</span><br></pre></td></tr></table></figure>
+
+<p>匹配结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">南京</span><br><span class="line">市鼓楼区</span><br><span class="line">南京</span><br><span class="line">大学</span><br></pre></td></tr></table></figure>
+
+<p>匹配的时间复杂度为<strong>O(n)</strong>，空间复杂度为<strong>O(1)</strong> 。</p>
+<h3 id="多个关键词匹配"><a href="#多个关键词匹配" class="headerlink" title="多个关键词匹配"></a>多个关键词匹配</h3><h3 id="如果多个关键词匹配呢"><a href="#如果多个关键词匹配呢" class="headerlink" title="如果多个关键词匹配呢"></a>如果多个关键词匹配呢</h3><p>需要考虑关键词命中的位置，复杂度上升。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; keywords = Arrays.asList(<span class="string">"南京"</span>, <span class="string">"皇后大道"</span>, <span class="string">"南京大学"</span>);</span><br><span class="line">String content = <span class="string">"南京市鼓楼区皇后大道22号南京大学北门"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span>[] indexes = <span class="keyword">new</span> <span class="keyword">int</span>[content.length()];</span><br><span class="line"><span class="keyword">int</span> start;</span><br><span class="line"><span class="keyword">for</span> (String keyword : keywords) &#123;</span><br><span class="line">  <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">  start = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">while</span> (start &lt; content.length() &amp;&amp; index &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> ((index = content.indexOf(keyword, start)) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">      indexes[index] = <span class="number">1</span>;</span><br><span class="line">      start += index;</span><br><span class="line">      indexes[index + keyword.length()] = <span class="number">1</span>;</span><br><span class="line">      start += keyword.length();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">start = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">1</span>; k &lt; indexes.length; k++) &#123;</span><br><span class="line">  <span class="keyword">if</span> (indexes[k] == <span class="number">1</span>) &#123;</span><br><span class="line">    System.out.println(content.substring(start, k));</span><br><span class="line">    start = k;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (start &lt; content.length()) &#123;</span><br><span class="line">  System.out.println(content.substring(start));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>匹配结果</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">南京</span><br><span class="line">市鼓楼区</span><br><span class="line">皇后大道</span><br><span class="line"><span class="number">22</span>号</span><br><span class="line">南京大学</span><br><span class="line">北门</span><br></pre></td></tr></table></figure>
+
+<p>匹配的时间复杂度为<strong>O(n*m)</strong>，空间复杂度为<strong>O(n)</strong> 。其中n为待匹配的字符串长度，m为关键词个数。</p>
+<h3 id="如果关键词之间有包含关系呢"><a href="#如果关键词之间有包含关系呢" class="headerlink" title="如果关键词之间有包含关系呢"></a>如果关键词之间有包含关系呢</h3><p>需要考虑最长匹配，复杂度进一步上升。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; keywords = Arrays.asList(<span class="string">"南京"</span>, <span class="string">"南京市"</span>, <span class="string">"南京大学"</span>, <span class="string">"南大"</span>);</span><br><span class="line"><span class="comment">// emmm，好复杂</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h3><ul>
+<li>每个关键词匹配是都需要遍历一遍待匹配的字符串</li>
+<li>每次匹配都是独立的，匹配结果需要存储以便进一步处理</li>
+</ul>
+<p>如何解决呢？</p>
+<h2 id="前缀树-Trie"><a href="#前缀树-Trie" class="headerlink" title="前缀树/Trie"></a>前缀树/Trie</h2><p>一种用于字符串匹配的高效数据结构，可实现前缀压缩和线性匹配。</p>
+<img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/Trie_example.png" title="Trie_example">
+
+<p>图中有8个键，分别为”A”, “to”, “tea”, “ted”, “ten”, “i”, “in” 以及 “inn”。其中的数字对应了每个键对应的值。</p>
+<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><ul>
+<li>精确匹配</li>
+<li>前缀匹配</li>
+</ul>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ul>
+<li>三数组Trie</li>
+<li>二数组Trie</li>
+</ul>
+<h3 id="时空复杂度"><a href="#时空复杂度" class="headerlink" title="时空复杂度"></a>时空复杂度</h3><ul>
+<li>时间复杂度：O(n)</li>
+<li>空间复杂度：O(k*m)</li>
+</ul>
+<p>空间换时间。</p>
+<h3 id="更多"><a href="#更多" class="headerlink" title="更多"></a>更多</h3><ol>
+<li>Wiki百科：<a href="https://en.wikipedia.org/wiki/Trie" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Trie</a></li>
+<li>Trie在线可视化：<a href="https://www.cs.usfca.edu/~galles/visualization/Trie.html" target="_blank" rel="noopener">https://www.cs.usfca.edu/~galles/visualization/Trie.html</a></li>
+<li>Trie原理到实现：<a href="https://linux.thai.net/~thep/datrie/datrie.html" target="_blank" rel="noopener">https://linux.thai.net/~thep/datrie/datrie.html</a></li>
+<li>从Trie树谈到后缀树：<a href="https://blog.csdn.net/v_july_v/article/details/6897097" target="_blank" rel="noopener">https://blog.csdn.net/v_july_v/article/details/6897097</a></li>
+</ol>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>如果要识别出一个字符串中所有的子串怎么办？还是需要维护匹配状态？emmm….</p>
+<h2 id="AC自动机"><a href="#AC自动机" class="headerlink" title="AC自动机"></a>AC自动机</h2><p>Aho-Corasick自动机或者算法，简称AC自动机，通过将模式串预处理为确定有限状态自动机，扫描文本一遍就能结束。其复杂度为O(n)，即与模式串的数量和长度无关。</p>
+<h3 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h3><p>自动机按照文本字符顺序，接受字符，并发生状态转移。这些状态缓存了“按照字符转移成功（但不是模式串的结尾）”、“按照字符转移成功（是模式串的结尾）”、“按照字符转移失败”三种情况下的跳转与输出情况，因而降低了复杂度。</p>
+<p>AC算法中有三个核心函数，分别是：</p>
+<ul>
+<li>success; 成功转移到另一个状态（也称goto表或success表）</li>
+<li>failure; 不可顺着字符串跳转的话，则跳转到一个特定的节点（也称failure表），从根节点到这个特定的节点的路径恰好是失败前的文本的一部分。</li>
+<li>emits; 命中一个模式串（也称output表）</li>
+</ul>
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><p>以经典的ushers为例，模式串是he/ she/ his /hers，文本为“ushers”。构建的自动机如图：</p>
+<img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/ac.png" title="ac">
+
+<h3 id="匹配过程"><a href="#匹配过程" class="headerlink" title="匹配过程"></a>匹配过程</h3><p>自动机从根节点0出发</p>
+<ol>
+<li>首先尝试按success表转移（图中实线）。按照文本的指示转移，也就是接收一个u。此时success表中并没有相应路线，转移失败。</li>
+<li>失败了则按照failure表回去（图中虚线）。按照文本指示，这次接收一个s，转移到状态3。</li>
+<li>成功了继续按success表转移，直到失败跳转步骤2，或者遇到output表中标明的“可输出状态”（图中红色状态）。此时输出匹配到的模式串，然后将此状态视作普通的状态继续转移。</li>
+</ol>
+<p>算法高效之处在于，当自动机接受了“ushe”之后，再接受一个r会导致无法按照success表转移，此时自动机会聪明地按照failure表转移到2号状态，并经过几次转移后输出“hers”。来到2号状态的路不止一条，从根节点一路往下，“h→e”也可以到达。而这个“he”恰好是“ushe”的结尾，状态机就仿佛是压根就没失败过（没有接受r），也没有接受过中间的字符“us”，直接就从初始状态按照“he”的路径走过来一样（到达同一节点，状态完全相同）。</p>
+<h3 id="应用-1"><a href="#应用-1" class="headerlink" title="应用"></a>应用</h3><ul>
+<li>多模式匹配</li>
+<li>字典分词(最长分词)</li>
+</ul>
+<h3 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h3><ul>
+<li>基于双数组Trie的实现</li>
+</ul>
+<h3 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h3><p>目前我们主要使用AC自动机来实现基于字典的最长分词。比如下面这个地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">南京市鼓楼区皇后大道22号南京大学</span><br></pre></td></tr></table></figure>
+
+<p>现在字典中包含”南京市”、”鼓楼区”和”号”关键词，则采用最长分词，可以得到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">南京市 鼓楼区 皇后大道22 号 南京大学</span><br></pre></td></tr></table></figure>
+
+<h3 id="更多-1"><a href="#更多-1" class="headerlink" title="更多"></a>更多</h3><ol>
+<li>Wiki百科：<a href="https://en.wikipedia.org/wiki/Aho-Corasick_algorithm" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Aho-Corasick_algorithm</a></li>
+<li>Aho-Corasick算法的Java实现与分析：<a href="http://www.hankcs.com/program/algorithm/implementation-and-analysis-of-aho-corasick-algorithm-in-java.html" target="_blank" rel="noopener">http://www.hankcs.com/program/algorithm/implementation-and-analysis-of-aho-corasick-algorithm-in-java.html</a></li>
+<li>Aho Corasick自动机结合DoubleArrayTrie极速多模式匹配：<a href="http://www.hankcs.com/program/algorithm/aho-corasick-double-array-trie.html" target="_blank" rel="noopener">http://www.hankcs.com/program/algorithm/aho-corasick-double-array-trie.html</a></li>
+</ol>
+<h2 id="几种字符串匹配对比"><a href="#几种字符串匹配对比" class="headerlink" title="几种字符串匹配对比"></a>几种字符串匹配对比</h2><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>单模式</th>
+<th>多模式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>简单字符串匹配</td>
+<td>支持，速度慢</td>
+<td>支持，太复杂</td>
+</tr>
+<tr>
+<td>Trie</td>
+<td>支持，速度快</td>
+<td>支持，需要额外编码</td>
+</tr>
+<tr>
+<td>Aho-Corasick</td>
+<td>支持，速度快</td>
+<td>完全支持</td>
+</tr>
+</tbody></table>
+<h3 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h3><p>测试条件：给定63万个字符串，从中随机抽取100个字符串作为待识别字符串，测试完成100个字符串匹配需要多长时间？</p>
+<img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/match_test.png" title="match_test">
+
+<h2 id="重复字符串"><a href="#重复字符串" class="headerlink" title="重复字符串"></a>重复字符串</h2><p>时间地址处理过程中经常会遇到这样的问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">江苏省南京市江苏省南京市鼓楼区皇后大道22号南京大学</span><br></pre></td></tr></table></figure>
+
+<p>那现在如何处理以将这样的地址规范化成这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">江苏省南京市鼓楼区皇后大道22号南京大学</span><br></pre></td></tr></table></figure>
+
+<p>这样的问题，可以抽象为：</p>
+<blockquote>
+<p>给定一个字符串L，如果子串R(至少包含一个字符)在L中至少出现两次，则称R是L的重复子串。而其中的最长的重复子串，称为最长重复子串。解决这样的问题，可以称为Longest Repeat Subsequence。</p>
+</blockquote>
+<p>比如上例中的最长重复子串是”江苏省南京市”。</p>
+<h3 id="朴素解法"><a href="#朴素解法" class="headerlink" title="朴素解法"></a>朴素解法</h3><p>直接子串和子串比较，查看所有字符串。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LongestRepeatSubsequence</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">lenOfSubsequence</span><span class="params">(String s, <span class="keyword">int</span> i, <span class="keyword">int</span> j, <span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> len = s.length();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (i &lt; len &amp;&amp; j &lt; len &amp;&amp; s.charAt(i) == s.charAt(j)) &#123;</span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (count &gt; max) &#123;</span><br><span class="line">            System.out.println(s.substring(i - count, i));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">nativeMethod</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxLen = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> length = s.length();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i + <span class="number">1</span>; j &lt; length; j++) &#123;</span><br><span class="line">                len = lenOfSubsequence(s, i, j, maxLen);</span><br><span class="line">                <span class="keyword">if</span> (maxLen &lt; len) &#123;</span><br><span class="line">                    maxLen = len;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> maxLen;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String address = <span class="string">"江苏省南京市江苏省南京市鼓楼区皇后大道22号南京大学"</span>;</span><br><span class="line">        System.out.println(nativeMethod(address));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样做的话时间复杂度$O(n^3)$，复杂度有点高。</p>
+<h2 id="后缀数组"><a href="#后缀数组" class="headerlink" title="后缀数组"></a>后缀数组</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><ul>
+<li>后缀：指从某个位置 $i$ 开始到整个字符串末尾结束的一个子串。字符串 $r$ 中从 $i$ 个字符开始的后缀表示为$suffix(i)$</li>
+<li>字符串大小：大小是指”字典顺序”</li>
+<li>后缀数组：一个存储了指定字符串所有后缀的大小为 $n$ 一维数组 $S_A$，并且其中的所有后缀按照字符串大小排序。$S_A[i] &lt; S_A[i+1] , 1 \leq i \leq n$</li>
+</ul>
+<p>比如<code>banana</code>字符串的后缀数组为：</p>
+<ul>
+<li>a[0]: a</li>
+<li>a[1]: ana</li>
+<li>a[2]: anana</li>
+<li>a[3]: banana</li>
+<li>a[4]: na</li>
+<li>a[5]: nana</li>
+</ul>
+<h3 id="基本思路-1"><a href="#基本思路-1" class="headerlink" title="基本思路"></a>基本思路</h3><p>通过一步预处理，降低了找寻具有相同前缀的子串的复杂度。现在只需要计算后缀数组中相邻两个后缀子串的公共前缀长度。</p>
+<h3 id="实现-2"><a href="#实现-2" class="headerlink" title="实现"></a>实现</h3><p>还是以上面例子来实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">suffixArray</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">trueTreeSet&lt;Suffix&gt; suffixes = <span class="keyword">new</span> TreeSet&lt;&gt;();</span><br><span class="line">true<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">truetruesuffixes.add(<span class="keyword">new</span> Suffix(i, s));</span><br><span class="line">true&#125;</span><br><span class="line"></span><br><span class="line">true<span class="keyword">int</span> max = <span class="number">0</span>;</span><br><span class="line">trueSuffix pre = suffixes.pollFirst();</span><br><span class="line">true<span class="keyword">for</span> (Suffix suffix : suffixes) &#123;</span><br><span class="line">truetrue<span class="keyword">int</span> len = lenOfSubsequence(s, pre.index, suffix.index, max);</span><br><span class="line">truetrue<span class="keyword">if</span> (max &lt; len) &#123;</span><br><span class="line">truetruetruemax = len;</span><br><span class="line">truetrue&#125;</span><br><span class="line"></span><br><span class="line">truetruepre = suffix;</span><br><span class="line">true&#125;</span><br><span class="line"></span><br><span class="line">true<span class="keyword">return</span> max;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Suffix</span> <span class="keyword">implements</span> <span class="title">Comparable</span>&lt;<span class="title">Suffix</span>&gt; </span>&#123;</span><br><span class="line">true<span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> index;</span><br><span class="line">true<span class="keyword">public</span> <span class="keyword">final</span> String data;</span><br><span class="line"></span><br><span class="line">true<span class="function"><span class="keyword">public</span> <span class="title">Suffix</span><span class="params">(<span class="keyword">int</span> index, String data)</span> </span>&#123;</span><br><span class="line">truetrue<span class="keyword">this</span>.index = index;</span><br><span class="line">truetrue<span class="keyword">this</span>.data = data;</span><br><span class="line">true&#125;</span><br><span class="line"></span><br><span class="line">true<span class="function"><span class="keyword">public</span> String <span class="title">subsequence</span><span class="params">()</span> </span>&#123;</span><br><span class="line">truetrue<span class="keyword">return</span> data.substring(index);</span><br><span class="line">true&#125;</span><br><span class="line"></span><br><span class="line">true<span class="meta">@Override</span></span><br><span class="line">true<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">truetrue<span class="keyword">return</span> index;</span><br><span class="line">true&#125;</span><br><span class="line"></span><br><span class="line">true<span class="meta">@Override</span></span><br><span class="line">true<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">truetrue<span class="keyword">return</span> subsequence();</span><br><span class="line">true&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">true<span class="meta">@Override</span></span><br><span class="line">true<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Suffix o)</span> </span>&#123;</span><br><span class="line">truetrue<span class="keyword">int</span> i = index;</span><br><span class="line">truetrue<span class="keyword">int</span> j = o.index;</span><br><span class="line"></span><br><span class="line">truetrue<span class="keyword">while</span> (i &lt; data.length() &amp;&amp; j &lt; data.length()) &#123;</span><br><span class="line">truetruetrue<span class="keyword">if</span> (data.charAt(i) &gt; data.charAt(j)) &#123;</span><br><span class="line">truetruetruetrue<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">truetruetrue&#125; <span class="keyword">else</span> <span class="keyword">if</span> (data.charAt(i) &lt; data.charAt(j)) &#123;</span><br><span class="line">truetruetruetrue<span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">truetruetrue&#125;</span><br><span class="line"></span><br><span class="line">truetruetrue++i;</span><br><span class="line">truetruetrue++j;</span><br><span class="line">truetrue&#125;</span><br><span class="line"></span><br><span class="line">truetrue<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">true&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><ul>
+<li>遍历原始字符串，得到后缀数组，时间复杂度为 $O(n)$</li>
+<li>后缀数组排序，由于TreeSet底层使用TreeMap实现，其通过Red-Black Tree来实现，所以每插入一个元素的时间复杂度为 $O(logn)$ ，因此整个排序过程需要 $O(nlogn)$ </li>
+<li>计算最长重复子串，遍历后缀数组，每两个相邻后缀的计算，时间复杂度为 $O(n^2)$</li>
+</ul>
+<p>总体时间复杂度为$O(n) + O(nlogn) + O(n^2) = \Theta(n^2)$。但增加了额外的存储，空间复杂度为$\Theta(n)$ 。还是空间换时间。</p>
+<h3 id="更多-2"><a href="#更多-2" class="headerlink" title="更多"></a>更多</h3><ol>
+<li>从Trie树谈到后缀树：<a href="https://blog.csdn.net/v_july_v/article/details/6897097" target="_blank" rel="noopener">https://blog.csdn.net/v_july_v/article/details/6897097</a></li>
+</ol>
+<h2 id="字符串之间的相似性"><a href="#字符串之间的相似性" class="headerlink" title="字符串之间的相似性"></a>字符串之间的相似性</h2><p>考虑这样一个问题：<br>$$<br>“南京大学”  \simeq  “南大” ?<br>$$</p>
+<p>如何衡量两个字符串之间的相似性？</p>
+<h3 id="距离"><a href="#距离" class="headerlink" title="距离"></a>距离</h3><p>通过定义“距离”的概念来对字符串进行相似性度量。距离度量应该满足以下几个条件：</p>
+<ol>
+<li>对称性，即 $d(A, B) = d(B, A)$</li>
+<li>非负性，即 $\forall A\forall B, d(A, B) \ge 0$</li>
+<li>一致性，即 $A = B\Leftrightarrow d(A, B) = 0$</li>
+<li>三角不等式，即 $d(A, C) \le d(A, B) + d(B, C)$</li>
+</ol>
+<p>比如明氏距离(Minkowski distance)一种比较常用的距离：<br>$$<br>L_p(x_i, x_j) = \bigg(\sum_{l=1}^{n}|x_i^{(l)} - x_j^{(l)}|^p \bigg)^{\frac {1} {p}}, p \ge 1<br>$$</p>
+<ul>
+<li>当p=1时，为曼哈顿距离</li>
+<li>当p=2时，为欧几里得距离</li>
+<li>当p=$\infty$时，为切比雪夫距离</li>
+</ul>
+<h3 id="字符串相似性"><a href="#字符串相似性" class="headerlink" title="字符串相似性"></a>字符串相似性</h3><ul>
+<li>编辑距离/扩展编辑距离</li>
+<li>汉明距离</li>
+<li>最长公共子序列(LCS)</li>
+</ul>
+<p>这边着重介绍一下编辑距离和最长公共子序列，汉明距离主要应用于长度相同的序列比较，局限性较大。</p>
+<h2 id="编辑距离"><a href="#编辑距离" class="headerlink" title="编辑距离"></a>编辑距离</h2><p>针对两个字符串的差异程度的量化，方式是通过至少需要多少次处理才能将一个字符串变为另一个字符串。可接受的处理包括：</p>
+<ul>
+<li>删除某个字符</li>
+<li>插入某个字符</li>
+<li>替换某个字符</li>
+</ul>
+<p>通常会有一者作为标准字符串，另一者作为可能出错的字符串，两种进行距离计算，得出可能出错的字符串是否是某个标准字符串。</p>
+<h3 id="举例-1"><a href="#举例-1" class="headerlink" title="举例"></a>举例</h3><p>比如<code>南大</code>和<code>南京大学</code>两者的编辑距离为2：</p>
+<ol>
+<li>南大 $\rightarrow$ 南<strong>京</strong>大（插入<strong>京</strong>）</li>
+<li>南京大 $\rightarrow$ 南京大<strong>学</strong>（插入<strong>学</strong>）</li>
+</ol>
+<p>另一个经典实例是<code>kitten</code>和<code>sitting</code>的编辑距离，它们之间的距离是3：</p>
+<ol>
+<li><strong>k</strong>itten $\rightarrow$ <strong>s</strong>itten (将k替换为s)</li>
+<li>sitt<strong>e</strong>n $\rightarrow$ sitt<strong>i</strong>n (将e替换为i)</li>
+<li>sittin $\rightarrow$ sittin<strong>g</strong> (最后插入g)</li>
+</ol>
+<h3 id="实现-3"><a href="#实现-3" class="headerlink" title="实现"></a>实现</h3><p>这是个动态规划问题，其转移方程定义：<br>$$<br>\begin{eqnarray} D(A_i, B_j) = \begin{cases}<br>D(A_{i-1},  B_{j-1}) &amp; if \quad a_i = b_j \<br>min(D(A_{i-1}, B_j) + 1,  D(A_i, B_{j-1}) + 1, D(A_{i-1},  B_{j-1}) + 1) &amp; if \quad a_i \neq b_j \<br>max(i, j) &amp; if \quad min(i, j) = 0 \<br>\end{cases}\end{eqnarray}<br>$$<br><em>其中$A_i$表示$A$的前 $i$个字符组成的字符串，$a_i$表示$A$中第 $i$个字符，$B_j$和 $b_j$同理。</em></p>
+<p>转换为语言描述：</p>
+<ol>
+<li>当$a_i = b_j$时，$D(A_i, B_j) = D(A_{i-1}, B_{j-1})$。比如”abx”和”acx”的编辑距离等于”ab”和”ac”的编辑距离</li>
+<li>当$a_i \neq b_j$时，$D(A_i, B_j)$等于以下三者的最小值：<ul>
+<li>$D(A_{i-1}, B_j) + 1$（删除$a_i$），比如”abx”和”acy”的编辑距离等于”ab”和”acy”的编辑距离 + 1</li>
+<li>$D(A_{i}, B_{j-1}) + 1$（插入$b_i$），比如”abx”和”acy”的编辑距离等于”abxy”和”acy”的编辑距离 + 1</li>
+<li>$D(A_{i-1}, B_{j-1}) + 1$（将$a_i$替换为$b_j$），比如”abx”和”acy”的编辑距离等于”aby”和”acy”的编辑距离 + 1</li>
+</ul>
+</li>
+<li>当$A$字符串为空，表示将$A$需要插入$b_1 - b_j$字符，所以此时编辑距离为$j$，结束</li>
+<li>当$B$字符串为空，表示需要将$A$中$a_1 - a_i$字符全部删除，所以此时编辑距离为$i$，结束</li>
+</ol>
+<p>这边有一个优化点可以只通过一维数组保存历史值，降低空间复杂度。</p>
+<h3 id="相似度量"><a href="#相似度量" class="headerlink" title="相似度量"></a>相似度量</h3><p>编辑距离衡量的是差异性，如何转换为相似程度呢？<br>$$<br>S(A, B)=1 - \frac {D(A, B)} {max(|A|, |B|)}<br>$$<br><em>其中$D(A, B)$表示字符串A和字符串B的编辑距离，$|A|$和$|B|$分别表示字符串A和字符串B的长度。</em></p>
+<p>比如<code>南京大学</code>和<code>南大</code>两者的根据编辑距离计算得到的相似度为<br>$$<br>S(“南京大学”, “南大”) = 1 - \frac {2} {max(4, 2)} = 1 - \frac {2} {4} = 0.5<br>$$</p>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><ul>
+<li>模糊匹配</li>
+<li>拼写检查</li>
+</ul>
+<h3 id="变种"><a href="#变种" class="headerlink" title="变种"></a>变种</h3><ul>
+<li>Damerau-Levenshtein 距离：主要是增加了<strong>相邻字符交换</strong>这样一个操作，应为在实际情况中人们输入时前后两个字符顺序被输错的情况很常见。但个人认为这个在中文输入情况下比较少见。</li>
+<li>Weighted-Levenshtein 距离：即赋予每个动作一定的权重，比如降低插入权重，提高替换权重。</li>
+</ul>
+<h3 id="更多-3"><a href="#更多-3" class="headerlink" title="更多"></a>更多</h3><ol>
+<li>Wiki百科：<a href="https://en.wikipedia.org/wiki/Edit_distance" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Edit_distance</a></li>
+<li>编辑距离实现及优化：<a href="http://www.dreamxu.com/books/dsa/dp/edit-distance.html" target="_blank" rel="noopener">http://www.dreamxu.com/books/dsa/dp/edit-distance.html</a></li>
+<li>文本相似度量方法(1)：<a href="http://www.zmonster.me/2015/11/15/text-similarity-survey.html" target="_blank" rel="noopener">http://www.zmonster.me/2015/11/15/text-similarity-survey.html</a></li>
+<li>文本相似度量方法(2)：<a href="http://www.zmonster.me/2016/03/31/text-similarity-character-based-1.html" target="_blank" rel="noopener">http://www.zmonster.me/2016/03/31/text-similarity-character-based-1.html</a></li>
+</ol>
+<h2 id="最长公共子序列-LCS"><a href="#最长公共子序列-LCS" class="headerlink" title="最长公共子序列(LCS)"></a>最长公共子序列(LCS)</h2><p>对给定序列$A$和$B$，满足以下条件的一个序列$C$被称为$A$和$B$的公共子序列：</p>
+<ol>
+<li>$C$中的每一个元素都对应$A$和$B$中的一个元素</li>
+<li>从$C$中挑选两个元素$C_i$和$C_j$，其中$i$和$j$表示这两个元素在$C$中的序号(从左到右)，假设这两个元素分别对应$A_m$和$A_n$，那么有$(i-j)\cdot(n-m) \gt 0$，在$B$中对应的两个元素同理。即$C$中任意两个元素对应到$A$和$B$中其序号都应该是递增的</li>
+</ol>
+<p>比如说$A$=”南京市人民政府”，$B$=”南京人民政府”，那以下都是$A$和$B$的子序列：</p>
+<ul>
+<li>“南京”</li>
+<li>“人民政府”</li>
+</ul>
+<p>其中长度最大的即所谓的最长公共子序列。比如上面例子中的最长的”人民政府”。可以这样认为，如果$A$和$B$的最长公共子序列越长，$A$和$B$就越相似。</p>
+<p>计算时两个字符或者序列的地位是等价的。</p>
+<h3 id="实现-4"><a href="#实现-4" class="headerlink" title="实现"></a>实现</h3><p>这是个经典的动态规划问题，其转移方程定义为：<br>$$<br>\begin{eqnarray} LCS(A_i, B_j) = \begin{cases}<br>\emptyset &amp; if \quad i=0 \quad or \quad j=0 \<br>LCS(A_{i-1}, B_{j-1}) + a_i &amp; if \quad a_i = b_j \<br>longest(LCS(A_i, B_{j-1}), LCS(A_{i-1}, B_j)) &amp; if \quad a_i \neq b_j\<br>\end{cases}\end{eqnarray}<br>$$<br><em>其中$A_i$表示$A$的前 $i$个字符组成的字符串，$a_i$表示$A$中第 $i$个字符，$B_j$和 $b_j$同理。</em></p>
+<p>转为语言描述就是：</p>
+<ol>
+<li>当$a_i = b_i$时，$LCS(A_i, B_j) = LCS(A_{i-1}, B_{j-1})$。比如”abc”和”axy”的LCS等于”bc”和”xy”的LCS + “a”</li>
+<li>当$a_i \neq b_i$时，$LCS(A_i, B_j)$等于以下两者之间的最长的：<ul>
+<li>将$a_i$去掉，使用剩下的部分和$B$一起计算LCS</li>
+<li>将$b_j$去掉，使用剩下的部分和$A$一起计算LCS</li>
+</ul>
+</li>
+<li>当$A$字符串或者$B$字符串没有剩余字符时，返回空字符串，结束</li>
+</ol>
+<h3 id="相似度量-1"><a href="#相似度量-1" class="headerlink" title="相似度量"></a>相似度量</h3><p>$$<br>S(A, B) = \frac {2 \cdot |LCS(A, B)|} {|A| + |B|}<br>$$</p>
+<p><em>其中$|LCS(A, B)|$表示最长公共子序列的长度，$|A|$和$|B|$分别表示$A$和$B$字符串的长度。</em></p>
+<p>比如<code>南京市人民政府</code>和<code>南京人民政府</code>两者的根据LCS计算得到的相似度为<br>$$<br>S(“南京市人民政府”，”南京人民政府”) = \frac {2 \cdot 4} {7 + 6}=0.62<br>$$</p>
+<h3 id="应用场景-1"><a href="#应用场景-1" class="headerlink" title="应用场景"></a>应用场景</h3><ul>
+<li>版本控制</li>
+</ul>
+<h3 id="更多-4"><a href="#更多-4" class="headerlink" title="更多"></a>更多</h3><ol>
+<li>Wiki百科：<a href="https://en.wikipedia.org/wiki/Longest_common_subsequence_problem" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Longest_common_subsequence_problem</a></li>
+<li>文本相似度量方法(1)：<a href="http://www.zmonster.me/2016/03/31/text-similarity-survey.html" target="_blank" rel="noopener">http://www.zmonster.me/2015/11/15/text-similarity-survey.html</a></li>
+<li>文本相似度量方法(2)：<a href="http://www.zmonster.me/2016/03/31/text-similarity-character-based-1.html" target="_blank" rel="noopener">http://www.zmonster.me/2016/03/31/text-similarity-character-based-1.html</a></li>
+</ol>
+<h2 id="字符串相似性使用效果"><a href="#字符串相似性使用效果" class="headerlink" title="字符串相似性使用效果"></a>字符串相似性使用效果</h2><h3 id="应用场景-2"><a href="#应用场景-2" class="headerlink" title="应用场景"></a>应用场景</h3><p>在地址库中，我们需要对切分出的兴趣点数据进行二次校验，以尽量保证地址的归一化效果。比如以下两个地址</p>
+<ul>
+<li>“南京市建邺区烽火大厦”</li>
+<li>“南京市建邺区烽火科技大厦”</li>
+</ul>
+<p>经过切分处理后得到：</p>
+<ul>
+<li>“南京市” “建邺区” “烽火大厦”</li>
+<li>“南京市” “建邺区” “烽火科技大厦”</li>
+</ul>
+<p>如果不进行兴趣点校验则，两个地址在机器看来不一样。通过校验后(假设数据中”烽火科技大厦”出现次数高于”烽火大厦”)，则有：</p>
+<ul>
+<li>“南京市” “建邺区” “烽火科技大厦”</li>
+<li>“南京市” “建邺区” “烽火科技大厦”</li>
+</ul>
+<h3 id="实际效果"><a href="#实际效果" class="headerlink" title="实际效果"></a>实际效果</h3><img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/POI_check_test.png" title="POI_check_test">
+
+<h2 id="逻辑判断太复杂"><a href="#逻辑判断太复杂" class="headerlink" title="逻辑判断太复杂"></a>逻辑判断太复杂</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (condition1) &#123;</span><br><span class="line">  <span class="keyword">if</span> (condition12 &amp;&amp; condition3) &#123;</span><br><span class="line">    ....</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    ....</span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (condition4 || condition5) &#123;</span><br><span class="line">  <span class="keyword">if</span> (condition6 &amp;&amp; condition7 || condition8) &#123;</span><br><span class="line">    <span class="keyword">if</span> (condition9) &#123;</span><br><span class="line">      ...</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (condition10) &#123;</span><br><span class="line">      <span class="keyword">if</span> (condition11) &#123;</span><br><span class="line">        ....</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        ....</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (condition12 &amp;&amp; condition13) &#123;</span><br><span class="line">      </span><br><span class="line">    &#125;</span><br><span class="line">    ....</span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (condition134) &#123;</span><br><span class="line">  ....</span><br><span class="line">&#125;</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
+
+<img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/wtf.png" title="wtf">
+
+<p>其实控制语句描述的是状态如何迁移，需要明确哪些是状态，迁移条件是什么。而态机就是用来描述状态及其迁移状态的结构，其中有限状态机使用最广。</p>
+<h2 id="有限状态机-FSM-FSA"><a href="#有限状态机-FSM-FSA" class="headerlink" title="有限状态机(FSM/FSA)"></a>有限状态机(FSM/FSA)</h2><img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/DFAexample.png" title="DFAexample">
+
+<p>这是个很简单的状态机，你知道它表达的是什么吗？</p>
+<p> <span style="background-color:#252525;">其实它表示一个含有偶数个0的二进制数。</span> </p>
+<p>一般状态机由以下五个要素定义：</p>
+<ul>
+<li>$\Sigma$ 表示状态机接受的输入符号集</li>
+<li>$S$ 表示一个有限非空的状态集</li>
+<li>$S_0$ 表示初始状态，$S_0 \in S$</li>
+<li>$\delta$ 表示状态转换函数，$\delta: S \times \Sigma \rightarrow S$</li>
+<li>$F$ 表示可终结状态集(可能为空)，$F \subset S$</li>
+</ul>
+<p>你能说出上图的五要素吗？</p>
+<h3 id="实现-5"><a href="#实现-5" class="headerlink" title="实现"></a>实现</h3><p>实现不复杂，一般需要定义<strong>state</strong>和<strong>transition</strong>。核心在于状态之间的迁移实现，比如Map或者Array。</p>
+<h3 id="实际应用-1"><a href="#实际应用-1" class="headerlink" title="实际应用"></a>实际应用</h3><p>地址库中需要对规范化的地址进行检查，以便满足业务要求。比如要求实现以下条件约束的检查：</p>
+<img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/address_model.png" title="address_model">
+
+<p>如果使用控制语句实现，就会很复杂，且如果业务需求变化，整个逻辑就需要调整，代码需要重新编译，容易出错。因此，我们通过FSA抽象出可配置的检查：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">model</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--states描述了当前模型中包含的各种状态。id表示状态唯一代号，不能够重复；name表示状态名称；isTerminated表示该状态是否是可总结的--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">states</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"root"</span> <span class="attr">name</span>=<span class="string">"中国"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L1"</span> <span class="attr">name</span>=<span class="string">"省"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L2"</span> <span class="attr">name</span>=<span class="string">"市"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L3"</span> <span class="attr">name</span>=<span class="string">"区"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L4"</span> <span class="attr">name</span>=<span class="string">"街道"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L5"</span> <span class="attr">name</span>=<span class="string">"社区"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L6"</span> <span class="attr">name</span>=<span class="string">"路"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L7"</span> <span class="attr">name</span>=<span class="string">"号"</span> <span class="attr">isTerminated</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L8"</span> <span class="attr">name</span>=<span class="string">"小区"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L9"</span> <span class="attr">name</span>=<span class="string">"楼栋"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L10"</span> <span class="attr">name</span>=<span class="string">"单元"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L11"</span> <span class="attr">name</span>=<span class="string">"楼层"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L12"</span> <span class="attr">name</span>=<span class="string">"室"</span> <span class="attr">isTerminated</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">states</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--transitions描述了各个状态之间如何转移。from表示当前状态；to表示转移后的状态；</span></span><br><span class="line"><span class="comment">    when表示如何或者什么时候转移，目前表示对应等级元素存在时--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">transitions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"root"</span> <span class="attr">to</span>=<span class="string">"L1"</span> <span class="attr">when</span>=<span class="string">"A"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L1"</span> <span class="attr">to</span>=<span class="string">"L2"</span> <span class="attr">when</span>=<span class="string">"B"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L2"</span> <span class="attr">to</span>=<span class="string">"L3"</span> <span class="attr">when</span>=<span class="string">"C"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L2"</span> <span class="attr">to</span>=<span class="string">"L4"</span> <span class="attr">when</span>=<span class="string">"D"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L2"</span> <span class="attr">to</span>=<span class="string">"L6"</span> <span class="attr">when</span>=<span class="string">"F"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L3"</span> <span class="attr">to</span>=<span class="string">"L4"</span> <span class="attr">when</span>=<span class="string">"D"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L3"</span> <span class="attr">to</span>=<span class="string">"L5"</span> <span class="attr">when</span>=<span class="string">"E"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L3"</span> <span class="attr">to</span>=<span class="string">"L6"</span> <span class="attr">when</span>=<span class="string">"F"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L3"</span> <span class="attr">to</span>=<span class="string">"L8"</span> <span class="attr">when</span>=<span class="string">"H"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L4"</span> <span class="attr">to</span>=<span class="string">"L5"</span> <span class="attr">when</span>=<span class="string">"E"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L4"</span> <span class="attr">to</span>=<span class="string">"L6"</span> <span class="attr">when</span>=<span class="string">"F"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L4"</span> <span class="attr">to</span>=<span class="string">"L8"</span> <span class="attr">when</span>=<span class="string">"H"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L5"</span> <span class="attr">to</span>=<span class="string">"L6"</span> <span class="attr">when</span>=<span class="string">"F"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L5"</span> <span class="attr">to</span>=<span class="string">"L7"</span> <span class="attr">when</span>=<span class="string">"G"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L5"</span> <span class="attr">to</span>=<span class="string">"L8"</span> <span class="attr">when</span>=<span class="string">"H"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L6"</span> <span class="attr">to</span>=<span class="string">"L7"</span> <span class="attr">when</span>=<span class="string">"G"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L6"</span> <span class="attr">to</span>=<span class="string">"L8"</span> <span class="attr">when</span>=<span class="string">"H"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L7"</span> <span class="attr">to</span>=<span class="string">"L8"</span> <span class="attr">when</span>=<span class="string">"H"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L7"</span> <span class="attr">to</span>=<span class="string">"L9"</span> <span class="attr">when</span>=<span class="string">"J"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L8"</span> <span class="attr">to</span>=<span class="string">"L9"</span> <span class="attr">when</span>=<span class="string">"J"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L8"</span> <span class="attr">to</span>=<span class="string">"L12"</span> <span class="attr">when</span>=<span class="string">"M"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L9"</span> <span class="attr">to</span>=<span class="string">"L10"</span> <span class="attr">when</span>=<span class="string">"K"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L9"</span> <span class="attr">to</span>=<span class="string">"L11"</span> <span class="attr">when</span>=<span class="string">"L"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L9"</span> <span class="attr">to</span>=<span class="string">"L12"</span> <span class="attr">when</span>=<span class="string">"M"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L10"</span> <span class="attr">to</span>=<span class="string">"L11"</span> <span class="attr">when</span>=<span class="string">"L"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L10"</span> <span class="attr">to</span>=<span class="string">"L12"</span> <span class="attr">when</span>=<span class="string">"M"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L11"</span> <span class="attr">to</span>=<span class="string">"L12"</span> <span class="attr">when</span>=<span class="string">"M"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">transitions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">model</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="更多-5"><a href="#更多-5" class="headerlink" title="更多"></a>更多</h3><ol>
+<li>Wiki百科: <a href="https://en.wikipedia.org/wiki/Finite-state_machine" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Finite-state_machine</a></li>
+</ol>
+<h2 id="Java中的位运算"><a href="#Java中的位运算" class="headerlink" title="Java中的位运算"></a>Java中的位运算</h2><p>Java中很多人使用过最小粒度的内存操作也就是<strong>byte[]</strong>，很少使用甚至没有听说过位运算。其实，一些场景下，合理使用，可以极大的简化代码和提升性能。</p>
+<h3 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h3><ul>
+<li>&amp;：与</li>
+<li>|：或</li>
+<li>~：非</li>
+<li>^：异或</li>
+<li>&gt;&gt;：算术右移</li>
+<li>&gt;&gt;&gt;：逻辑右移</li>
+<li>&lt;&lt;：算术左移/逻辑左移</li>
+<li>循环左移/右移(无单独运算符)</li>
+</ul>
+<p>你能说出算术和逻辑的区别吗？</p>
+<p>另外，我们还需要知道在Java中，byte, short, int, long, float, double都是有符号的，且负整型数值采用补码表示，浮点类型采用<a href="https://en.wikipedia.org/wiki/IEEE_754" target="_blank" rel="noopener">IEEE 754</a>标准(更多内容，可以阅读《<a href="https://book.douban.com/subject/1230413" target="_blank" rel="noopener">深入理解计算机系统</a>》)。算术和逻辑的位移操作在于对符合位的处理：</p>
+<ol>
+<li>算术左移/逻辑左移：依次左移一位，尾部补0。</li>
+<li>算术右移：依次右移一位，尾部丢失，符号位复制一位</li>
+<li>逻辑右移：依次右移一位，尾部丢失，最高位补0</li>
+</ol>
+<p>下面这些运算的结果是多少？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">-~<span class="number">1</span>;</span><br><span class="line">~-<span class="number">1</span>;</span><br><span class="line">~<span class="number">1</span> + <span class="number">1</span>;</span><br><span class="line">(n &amp; <span class="number">1</span>) == <span class="number">1</span>;</span><br><span class="line">(-<span class="number">1</span> ^ <span class="number">23</span>) &gt;= <span class="number">0</span>;</span><br><span class="line"><span class="number">1</span> ^ <span class="number">2</span> ^ <span class="number">1</span>;</span><br><span class="line">(<span class="number">2</span> + <span class="number">4</span>) &gt;&gt; <span class="number">1</span>;</span><br><span class="line">Integer.MIN_VALUE &lt;&lt; <span class="number">1</span>;</span><br><span class="line">Integer.MIN_VALUE &gt;&gt; <span class="number">31</span>;</span><br><span class="line">Integer.MIN_VALUE &gt;&gt;&gt; <span class="number">31</span>;</span><br><span class="line">Integer.MAX_VALUE &lt;&lt; <span class="number">1</span>;</span><br><span class="line">Integer.MAX_VALUE &lt;&lt; <span class="number">31</span>;</span><br><span class="line">-<span class="number">1</span> &gt;&gt; <span class="number">1</span>;</span><br><span class="line">-<span class="number">1</span> &gt;&gt;&gt; <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>Long/Integer等包装类中有不少方法涉及到位操作，可以细细品读。此外JDK1.7以后引入了二进制表示以及数值类型可以加入下划线提高可读性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> binary = <span class="number">0b1010_1010_1010</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="BitSet"><a href="#BitSet" class="headerlink" title="BitSet"></a>BitSet</h3><p>一般情况下可以利用byte，short，int和long加上位运算来进行少量信息的计算，但是当需要很多位来存储信息时，比如Bitmap，BloomFilter中。虽然可以通过多个int或者long来存储，但Java中提供了更为方便的<strong>BitSet</strong>。</p>
+<img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/bitset.png" title="bitset">
+
+<p>一般可以利用它来大幅度提高内存使用效率，比如下面这个题目：</p>
+<blockquote>
+<p>有一千万个随机数，其取值范围为1到1亿之间。现在要求写一种算法，将1到1亿之间没有在这一千万随机数中的数找出来？</p>
+</blockquote>
+<p>如果一个随机数使用一个int(4bytes)来存储的话，那么需要<br>$$<br>\frac {4 \times 10000000} {1024 \times 1024} \approx 38.15 MB<br>$$<br>如果使用BitSet的话，我们需要1亿个bit，那么需要<br>$$<br>\frac {100000000} {8 \times 1024 \times 1024} \approx 11.92MB<br>$$<br>内存使用减少3倍。</p>
+<p>那么，你知道接下来该如何实现来解决该题目呢？</p>
+<h3 id="实际应用-2"><a href="#实际应用-2" class="headerlink" title="实际应用"></a>实际应用</h3><p>地址库中有一个补全环节，需要提取已切分地址中是否存在一些可用于补全的信息，考虑以下地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">南京市 建邺区 沙洲街道 云龙山路 88号 烽火科技大厦</span><br></pre></td></tr></table></figure>
+
+<p>这种地址存在一些可用的补全信息比如：</p>
+<ul>
+<li>建邺区+沙洲街道+云龙山路</li>
+<li>云龙山路+88号+烽火科技大厦</li>
+</ul>
+<p>这些信息可以用于补全下面的地址：</p>
+<ul>
+<li>南京市建邺区烽火科技大厦  $\rightarrow$ 南京市建邺区沙洲街道云龙山路88号烽火科技大厦</li>
+<li>南京市云龙山路88号烽火科技大厦 $\rightarrow$ 南京市建邺区沙洲街道云龙山路88号烽火科技大厦</li>
+</ul>
+<p>那如何来识别一个地址中是否存在可用的补全信息呢？进一步讲如何判断这些补全信息对某个地址来说是否有用呢？如果采用简单的if…else…的话，就会面临语句太复杂的问题，且性能上存在隐患。这里的做法是这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; addresses = Arrays.asList(<span class="string">"江苏省"</span>, <span class="string">"南京市"</span>, <span class="string">"建邺区"</span>, <span class="string">"沙洲街道"</span>, <span class="string">""</span>, <span class="string">"云龙山路"</span>, <span class="string">"88号"</span>, <span class="string">"烽火科技大厦"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> mask = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (String address: addresses) &#123;</span><br><span class="line">  mask &lt;&lt;= <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">if</span> (!address.isEmpty()) &#123;</span><br><span class="line">    mask |= <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">System.out.println(mask); <span class="comment">// 你知道mask等于多少吗？</span></span><br></pre></td></tr></table></figure>
+
+<p>由于实际情况中省市区已经可以通过字典进行补全，可以省略省市部分，这样降低了可能的值域范围。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mask &amp;= <span class="number">0x1F</span>;</span><br><span class="line">System.out.println(mask); <span class="comment">// 现在mask等于多少？</span></span><br></pre></td></tr></table></figure>
+
+<p>这样，地址可以转换为一个整数来表示。通过枚举各种能够提供有用补全信息的情况，可以获取相应的整数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 31: 即二进制11111，表示街道、社区、路、号、小区均有值</span></span><br><span class="line"><span class="comment">// 30: 即二进制11110，表示街道、社区、路、号均有值</span></span><br><span class="line"><span class="comment">// 29: 即二进制11101，表示街道、社区、路、小区均有值</span></span><br><span class="line"><span class="comment">// 28: 即二进制11100，表示表示街道、社区、路均有值</span></span><br><span class="line"><span class="comment">// 25: 即二进制11001，表示街道、社区、小区均有值</span></span><br><span class="line"><span class="comment">// 24: 即二进制11000，表示街道、社区均有值</span></span><br><span class="line"><span class="comment">// 23: 即二进制10111，表示街道、路、号、小区均有值</span></span><br><span class="line"><span class="comment">// 22: 即二进制10110，表示街道、路、号均有值</span></span><br><span class="line"><span class="comment">// 21: 即二进制10101，表示街道、路、小区均有值</span></span><br><span class="line"><span class="comment">// 20: 即二进制10100，表示街道、路均有值</span></span><br><span class="line"><span class="comment">// 17: 即二进制10001，表示街道、小区均有值</span></span><br><span class="line"><span class="comment">// 15: 即二进制01111，表示社区、路、号、小区均有值</span></span><br><span class="line"><span class="comment">// 14: 即二进制01110，表示社区、路、号均有值</span></span><br><span class="line"><span class="comment">// 13: 即二进制01101，表示社区、路、小区均有值</span></span><br><span class="line"><span class="comment">// 12: 即二进制01100，表示社区、路均有值</span></span><br><span class="line"><span class="comment">// 9: 即二进制01001，表示社区、小区均有值</span></span><br><span class="line"><span class="comment">// 7: 即二进制00111，表示路、号、小区均有值</span></span><br><span class="line"><span class="comment">// 5: 即二进制00101，表示路、小区均有值</span></span><br></pre></td></tr></table></figure>
+
+<p>现在可以使用前面介绍的BitSet来存储这些信息，这里只需要32bit(即一个int)就可以了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">BitSet filter = <span class="keyword">new</span> BitSet(<span class="number">32</span>); <span class="comment">// 目前Java实现实际需要一个long型来存储</span></span><br><span class="line">filter.set(<span class="number">28</span>, <span class="number">32</span>);</span><br><span class="line">filter.set(<span class="number">20</span>, <span class="number">26</span>);</span><br><span class="line">filter.set(<span class="number">17</span>);</span><br><span class="line">filter.set(<span class="number">12</span>, <span class="number">16</span>);</span><br><span class="line">filter.set(<span class="number">9</span>);</span><br><span class="line">filter.set(<span class="number">7</span>);</span><br><span class="line">filter.set(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">System.out.println(filter.get(mask)); <span class="comment">// true or false?</span></span><br></pre></td></tr></table></figure>
+
+<p>现在有一个新地址，可以这样来判断，现有补全信息是否可以补全。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 南京市建邺区烽火科技大厦 -&gt; 10001 = 17</span></span><br><span class="line"><span class="comment">// 南京市云龙山路88号烽火科技大厦 -&gt; 00111 = 7</span></span><br><span class="line">System.out.println((mask &amp; <span class="number">17</span>) &gt; <span class="number">0</span>); <span class="comment">// true or false?</span></span><br><span class="line">System.out.println((mask &amp; <span class="number">7</span>) &gt; <span class="number">0</span>); <span class="comment">// true or false?</span></span><br><span class="line">System.out.println((<span class="number">24</span> &amp; <span class="number">7</span>) &gt; <span class="number">0</span>); <span class="comment">// true or false?</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="更多-6"><a href="#更多-6" class="headerlink" title="更多"></a>更多</h3><p>如果你想深入了解一下位的神操作，建议你读一下《Hacker’s Delight》，中文名《算法心得：高效算法的奥秘》。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    John Tse
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/" title="说说地址标准化过程中使用的一些数据结构和算法">https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="../../../../tags/data-structure/" rel="tag"># data structure</a>
+          
+            <a href="../../../../tags/algorithm/" rel="tag"># algorithm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="../../../../2016/10/09/thinking-in-bigdata/" rel="next" title="Thinking in Bigdata">
+                <i class="fa fa-chevron-left"></i> Thinking in Bigdata
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="../../../../2019/07/22/a-index-for-data-query-design-and-implementation/" rel="prev" title="一次数据查询设计实现始末">
+                一次数据查询设计实现始末 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="https://avatars2.githubusercontent.com/u/3964478?v=3&s=460" alt="John Tse">
+          <p class="site-author-name" itemprop="name">John Tse</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="../../../../archives/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/NeoTse" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/JohnTseCN" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                    
+                      Twitter
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="../../../../images/cc-by-nc-sa.svg" alt="Creative Commons">
+            </a>
+          </div>
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#字典分词"><span class="nav-text">字典分词</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#单个关键词匹配"><span class="nav-text">单个关键词匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多个关键词匹配"><span class="nav-text">多个关键词匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如果多个关键词匹配呢"><span class="nav-text">如果多个关键词匹配呢</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如果关键词之间有包含关系呢"><span class="nav-text">如果关键词之间有包含关系呢</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#存在的问题"><span class="nav-text">存在的问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前缀树-Trie"><span class="nav-text">前缀树/Trie</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#应用"><span class="nav-text">应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#时空复杂度"><span class="nav-text">时空复杂度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更多"><span class="nav-text">更多</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题"><span class="nav-text">问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AC自动机"><span class="nav-text">AC自动机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本思路"><span class="nav-text">基本思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#举例"><span class="nav-text">举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#匹配过程"><span class="nav-text">匹配过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应用-1"><span class="nav-text">应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-1"><span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实际应用"><span class="nav-text">实际应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更多-1"><span class="nav-text">更多</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#几种字符串匹配对比"><span class="nav-text">几种字符串匹配对比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#性能对比"><span class="nav-text">性能对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重复字符串"><span class="nav-text">重复字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#朴素解法"><span class="nav-text">朴素解法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后缀数组"><span class="nav-text">后缀数组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义"><span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本思路-1"><span class="nav-text">基本思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-2"><span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复杂度分析"><span class="nav-text">复杂度分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更多-2"><span class="nav-text">更多</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字符串之间的相似性"><span class="nav-text">字符串之间的相似性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#距离"><span class="nav-text">距离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串相似性"><span class="nav-text">字符串相似性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编辑距离"><span class="nav-text">编辑距离</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#举例-1"><span class="nav-text">举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-3"><span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相似度量"><span class="nav-text">相似度量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应用场景"><span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变种"><span class="nav-text">变种</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更多-3"><span class="nav-text">更多</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最长公共子序列-LCS"><span class="nav-text">最长公共子序列(LCS)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-4"><span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相似度量-1"><span class="nav-text">相似度量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应用场景-1"><span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更多-4"><span class="nav-text">更多</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字符串相似性使用效果"><span class="nav-text">字符串相似性使用效果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#应用场景-2"><span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实际效果"><span class="nav-text">实际效果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#逻辑判断太复杂"><span class="nav-text">逻辑判断太复杂</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有限状态机-FSM-FSA"><span class="nav-text">有限状态机(FSM/FSA)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-5"><span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实际应用-1"><span class="nav-text">实际应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更多-5"><span class="nav-text">更多</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java中的位运算"><span class="nav-text">Java中的位运算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本操作"><span class="nav-text">基本操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BitSet"><span class="nav-text">BitSet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实际应用-2"><span class="nav-text">实际应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更多-6"><span class="nav-text">更多</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2019 &mdash; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Tse</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">
+      37k
+    </span>
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Mist
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/fastclick/1.0.6/fastclick.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.lazyload/1.9.3/jquery.lazyload.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/velocity/1.2.3/velocity.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/velocity/1.2.3/velocity.ui.min.js"></script>
+
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://johntse.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/';
+          this.page.identifier = '2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/';
+          this.page.title = '说说地址标准化过程中使用的一些数据结构和算法';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://johntse.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('-1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+  <script type="text/javascript" src="../../../../js/src/js.cookie.js?v=5.1.2"></script>
+  <script type="text/javascript" src="../../../../js/src/scroll-cookie.js?v=5.1.2"></script>
+
+
+  
+
+</body>
+</html>
