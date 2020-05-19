@@ -104,6 +104,8 @@
 
 
 
+  <link rel="alternate" href="../../atom.xml" title="敏思·践行" type="application/atom+xml">
+
 
 
 
@@ -332,7 +334,7 @@
 
       <h3 class="post-title">
         
-            <a class="post-title-link" href="../../2018/07/10/how-to-identify-the-coordinate-system-in-positioning-information/" itemprop="url">
+            <a class="post-title-link" href="../../how-to-identify-the-coordinate-system-in-positioning-information/" itemprop="url">
               
                 <span itemprop="name">如何识别定位信息中的坐标系</span>
               
@@ -358,7 +360,7 @@
 
       <h3 class="post-title">
         
-            <a class="post-title-link" href="../../2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/" itemprop="url">
+            <a class="post-title-link" href="../../talk-about-some-data-structures-and-algorithms-used-in-address-standardization/" itemprop="url">
               
                 <span itemprop="name">说说地址标准化过程中使用的一些数据结构和算法</span>
               
@@ -384,7 +386,7 @@
 
       <h3 class="post-title">
         
-            <a class="post-title-link" href="../../2016/10/09/thinking-in-bigdata/" itemprop="url">
+            <a class="post-title-link" href="../../thinking-in-bigdata/" itemprop="url">
               
                 <span itemprop="name">Thinking in Bigdata</span>
               
@@ -484,6 +486,13 @@
 
         </nav>
 
+        
+          <div class="feed-link motion-element">
+            <a href="../../atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
         
 
         <div class="links-of-author motion-element">
@@ -719,7 +728,7 @@
     var isfetched = false;
     var isXml = true;
     // Search DB path;
-    var search_path = "";
+    var search_path = "search.xml";
     if (search_path.length === 0) {
       search_path = "search.xml";
     } else if (/json$/i.test(search_path)) {

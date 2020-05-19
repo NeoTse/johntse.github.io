@@ -95,19 +95,21 @@
 
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+<link href="../css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
 
 
-  <meta name="keywords" content="big data,algorithm,hadoop,database,">
-
-
-
+  <meta name="keywords" content="algorithm,hadoop,big data,database,">
 
 
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2">
+  <link rel="alternate" href="../atom.xml" title="敏思·践行" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico?v=5.1.2">
 
 
 
@@ -115,24 +117,24 @@
 
 
 <meta name="description" content="这篇文章是本人在接触大数据过程中，对一些原理、概念以及当前常用实现技术的笔记和总结。本人接触大数据不深，实践不多，见识不广，如果错误或者偏颇之处，欢迎斧正。 未完待续">
-<meta name="keywords" content="big data,algorithm,hadoop,database">
+<meta name="keywords" content="algorithm,hadoop,big data,database">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Thinking in Bigdata">
-<meta property="og:url" content="https://johntse.dev/2016/10/09/thinking-in-bigdata/index.html">
+<meta property="og:url" content="https://johntse.dev/thinking-in-bigdata/index.html">
 <meta property="og:site_name" content="敏思·践行">
 <meta property="og:description" content="这篇文章是本人在接触大数据过程中，对一些原理、概念以及当前常用实现技术的笔记和总结。本人接触大数据不深，实践不多，见识不广，如果错误或者偏颇之处，欢迎斧正。 未完待续">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://johntse.dev/2016/10/09/thinking-in-bigdata/computer_storage.png">
-<meta property="og:image" content="https://johntse.dev/2016/10/09/thinking-in-bigdata/RDBMS_structure.png">
-<meta property="og:image" content="https://johntse.dev/2016/10/09/thinking-in-bigdata/Hilbert_InfoGrowth.png">
-<meta property="og:image" content="https://johntse.dev/2016/10/09/thinking-in-bigdata/CAP.png">
-<meta property="og:image" content="https://johntse.dev/2016/10/09/thinking-in-bigdata/Moores_Law.png">
-<meta property="og:image" content="https://johntse.dev/2016/10/09/thinking-in-bigdata/Linerization.png">
+<meta property="og:image" content="https://johntse.dev/thinking-in-bigdata/computer_storage.png">
+<meta property="og:image" content="https://johntse.dev/thinking-in-bigdata/RDBMS_structure.png">
+<meta property="og:image" content="https://johntse.dev/thinking-in-bigdata/Hilbert_InfoGrowth.png">
+<meta property="og:image" content="https://johntse.dev/thinking-in-bigdata/CAP.png">
+<meta property="og:image" content="https://johntse.dev/thinking-in-bigdata/Moores_Law.png">
+<meta property="og:image" content="https://johntse.dev/thinking-in-bigdata/Linerization.png">
 <meta property="og:updated_time" content="2020-05-10T05:14:12.981Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Thinking in Bigdata">
 <meta name="twitter:description" content="这篇文章是本人在接触大数据过程中，对一些原理、概念以及当前常用实现技术的笔记和总结。本人接触大数据不深，实践不多，见识不广，如果错误或者偏颇之处，欢迎斧正。 未完待续">
-<meta name="twitter:image" content="https://johntse.dev/2016/10/09/thinking-in-bigdata/computer_storage.png">
+<meta name="twitter:image" content="https://johntse.dev/thinking-in-bigdata/computer_storage.png">
 
 
 
@@ -161,7 +163,7 @@
 
 
 
-  <link rel="canonical" href="https://johntse.dev/2016/10/09/thinking-in-bigdata/">
+  <link rel="canonical" href="https://johntse.dev/thinking-in-bigdata/">
 
 
 
@@ -400,7 +402,7 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../../../categories/big-data/" itemprop="url" rel="index">
+                  <a href="../categories/big-data/" itemprop="url" rel="index">
                     <span itemprop="name">big data</span>
                   </a>
                 </span>
@@ -411,7 +413,7 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../../../categories/big-data/thinking/" itemprop="url" rel="index">
+                  <a href="../categories/big-data/thinking/" itemprop="url" rel="index">
                     <span itemprop="name">thinking</span>
                   </a>
                 </span>
@@ -430,7 +432,7 @@
                   <i class="fa fa-comment-o"></i>
                 </span>
                 <a href="#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/10/09/thinking-in-bigdata/" itemprop="commentCount"></span>
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="thinking-in-bigdata/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -496,7 +498,7 @@
 <h2 id="一、-引言"><a href="#一、-引言" class="headerlink" title="一、 引言"></a>一、 引言</h2><p>这篇文章是本人在接触大数据过程中，对一些原理、概念以及当前常用实现技术的笔记和总结。本人接触大数据不深，实践不多，见识不广，如果错误或者偏颇之处，欢迎斧正。</p>
 <h2 id="二、-数据"><a href="#二、-数据" class="headerlink" title="二、 数据"></a>二、 数据</h2><p>数据伴随着人类文明出现和发展，同样计算的需求一直存在，从结绳记事到算盘，从差分机到现代计算机的诞生无不是用来更好地处理数据的。然而计算资源始终是有限的，这就决定了计算的过程必定是迭代进行的，中间结果和未使用数据都需要存放在特定的介质上。</p>
 <p>数据存放的介质从竹简到纸张，从磁带到高速缓存，存放的容量和存取速度不断演变。同样由于资源的有限性，在现代计算机上，需要面临容量和速度的取舍。下面是现代计算机的存储体系（冯·洛伊曼体系）：</p>
-<img src="/2016/10/09/thinking-in-bigdata/computer_storage.png" title="computer_storage">
+<img src="/thinking-in-bigdata/computer_storage.png" title="computer_storage">
 
 <p>这里可以看到容量和速度存在<strong>反比</strong>关系。为了提高计算速度，数据存放介质的存取速度当然越快越好，但受容量的限制大部分数据都被存放在存取速度一般或者很慢的介质上，即绝大部分数据往往存放在离CPU较远的地方。而计算时往往需要在那些存取速度较慢的介质上搜索所需要的数据，或者更新数据到这些介质。一方面，这些介质本身访问速度慢；另一方面，其上存储数据量较大，进一步降低了定位数据的速度。</p>
 <p>早期，数据量不大结构简单的情况下，人们简单地使用操作系统的文件系统来管理存储数据的文件，实现数据的管理工作。但随着数据量增大，结构复杂化，一些问题逐渐显现：</p>
@@ -543,7 +545,7 @@
 <p><strong>持久性</strong></p>
 <p>它要求数据库事务一旦执行完毕并提交，就应该永久保存在数据库中。即数据必须记录到非易失性存储上，另一方面，它要求数据库具有错误恢复能力。</p>
 <p>这些特性赋予了关系型数据库很强的数据管理能力，多用户的支持、安全审计、异常恢复等其它特性，使得它成为了使用范围最广影响最深的一类数据库。下面是一个关系型数据库的基本结构：</p>
-<img src="/2016/10/09/thinking-in-bigdata/RDBMS_structure.png" title="RDBMS_structure">
+<img src="/thinking-in-bigdata/RDBMS_structure.png" title="RDBMS_structure">
 
 <p>一些常见的关系型数据库：</p>
 <ul>
@@ -558,7 +560,7 @@
 <p><strong>但辉煌之下，一场危机正在酝酿。</strong></p>
 <p>上个世纪90年代开始，面向对象编程开始兴起。随着越来越多的系统使用OO构建，人们发现将内存中的对象数据持久化到关系型数据库中存在一些障碍，两种模式似乎无法兼容（具体可以参考相应的维基百科词条<a href="https://en.wikipedia.org/wiki/Object-relational_impedance_mismatch" target="_blank" rel="noopener"><strong>https://en.wikipedia.org/wiki/Object-relational_impedance_mismatch</strong></a>）。人们将这种现象称之为<strong>Object-relational impedance mismatch</strong>，即“阻抗失衡”。一些ORM工具和框架被创造出来，试图解决这些问题。</p>
 <p>另一方面，随着互联网快速发展，数据的量和形式都空前的大。加上昂贵的授权和维护费用，使得越来越多的企业开始寻求性价比更高的解决方案。</p>
-<img src="/2016/10/09/thinking-in-bigdata/Hilbert_InfoGrowth.png" title="Hilbert_InfoGrowth">
+<img src="/thinking-in-bigdata/Hilbert_InfoGrowth.png" title="Hilbert_InfoGrowth">
 
 <p>随着时代的发展，数据产生场景不断发生变化，数据格式形态也变得越来越丰富。从结构化的角度大致可以分为：</p>
 <ul>
@@ -595,7 +597,7 @@
 </ul>
 <p>其他的还有比如对象型数据库，基于云的数据库等，具体可以参考相应的维基百科词条<a href="https://en.wikipedia.org/wiki/NoSQL" target="_blank" rel="noopener"><strong>https://en.wikipedia.org/wiki/NoSQL</strong></a></p>
 <h4 id="这些NoSQL数据库什么时候用"><a href="#这些NoSQL数据库什么时候用" class="headerlink" title="这些NoSQL数据库什么时候用"></a><strong>这些NoSQL数据库什么时候用</strong></h4><p>由于CAP约束的存在，各个数据库在实现上面临着取舍，各自专注的领域有所区别。下面介绍一下各种NoSQL数据库的常见的应用场景：</p>
-<img src="/2016/10/09/thinking-in-bigdata/CAP.png" title="CAP">
+<img src="/thinking-in-bigdata/CAP.png" title="CAP">
 
 <p><em>关于一致性和可用性的更多讨论将在下一章详细说明。</em></p>
 <p><strong>键值对类型</strong></p>
@@ -724,7 +726,7 @@
 <li>横向扩展(scale out)：通过使用大量廉价的机器组建集群，实现分布式系统，达到资源扩充的目的。但这种方式带来了集群管理的难题</li>
 </ul>
 <p>由于摩尔定律逐渐失效</p>
-<img src="/2016/10/09/thinking-in-bigdata/Moores_Law.png" title="Moores_Law">
+<img src="/thinking-in-bigdata/Moores_Law.png" title="Moores_Law">
 
 <p>单台计算机的性能提升幅度已经不能满足日益增长的数据，且成本高昂。因此横向扩展成了眼下可行的选择。特别是Google发表的《三大论文》，使得<strong>分布式计算</strong>的概念开始在互联网应用中盛行。当然，分布式概念本身不是一个新事物。比如因特网本身就是一个成功的巨型分布式应用，其它的还有DHT(分布式散列表，大家比较熟悉的应用BitTorrent就是基于此)，区块链(这个比较火)。我们这里讲的分布式主要是指用来大规模处理和存储海量数据。</p>
 <p><em>扩展阅读</em>：</p>
@@ -791,7 +793,7 @@
 </ul>
 </li>
 <li>线性一致性：它的一致性要强于顺序一致性，也叫强一致性或者原子一致性。这个是我们现在能够实现的最高级别的一致性模型。它是在前面的一致性模型的基础上加入了对时间顺序的要求，而这个不依赖全局物理时钟。比如：<ul>
-<li><img src="/2016/10/09/thinking-in-bigdata/Linerization.png" title="Linerization"></li>
+<li><img src="/thinking-in-bigdata/Linerization.png" title="Linerization"></li>
 </ul>
 </li>
 <li>因果一致性：是一种比顺序一致性要弱的模型，它主要区分了哪些操作是有因果关系的，哪些操作是无关的(而顺序一致性则要求所有的操作都是一致的)。只有存在因果关系的操作才要求所有进程以相同的次序看到，对于无因果关系的，并无次序保证。比如在分布式存储中，对于所有可能存在因果关系的写入操作，其发生的先后顺序对于系统中所有节点来说都是一样。并发写(不存在因果关系)则在不同节点上的执行顺序可能是不同的。</li>
@@ -939,7 +941,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://johntse.dev/2016/10/09/thinking-in-bigdata/" title="Thinking in Bigdata">https://johntse.dev/2016/10/09/thinking-in-bigdata/</a>
+    <a href="https://johntse.dev/thinking-in-bigdata/" title="Thinking in Bigdata">https://johntse.dev/thinking-in-bigdata/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -954,13 +956,13 @@
       
         <div class="post-tags">
           
-            <a href="../../../../tags/big-data/" rel="tag"># big data</a>
+            <a href="../tags/algorithm/" rel="tag"># algorithm</a>
           
-            <a href="../../../../tags/algorithm/" rel="tag"># algorithm</a>
+            <a href="../tags/hadoop/" rel="tag"># hadoop</a>
           
-            <a href="../../../../tags/hadoop/" rel="tag"># hadoop</a>
+            <a href="../tags/big-data/" rel="tag"># big data</a>
           
-            <a href="../../../../tags/database/" rel="tag"># database</a>
+            <a href="../tags/database/" rel="tag"># database</a>
           
         </div>
       
@@ -979,7 +981,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="../../../../2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/" rel="prev" title="说说地址标准化过程中使用的一些数据结构和算法">
+              <a href="../talk-about-some-data-structures-and-algorithms-used-in-address-standardization/" rel="prev" title="说说地址标准化过程中使用的一些数据结构和算法">
                 说说地址标准化过程中使用的一些数据结构和算法 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -1064,7 +1066,7 @@
 
           
             <div class="site-state-item site-state-posts">
-              <a href="../../../../archives/">
+              <a href="../archives/">
                 <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">日志</span>
               </a>
@@ -1095,6 +1097,13 @@
 
         </nav>
 
+        
+          <div class="feed-link motion-element">
+            <a href="../atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
         
 
         <div class="links-of-author motion-element">
@@ -1129,7 +1138,7 @@
         
           <div class="cc-license motion-element" itemprop="license">
             <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
-              <img src="../../../../images/cc-by-nc-sa.svg" alt="Creative Commons">
+              <img src="../images/cc-by-nc-sa.svg" alt="Creative Commons">
             </a>
           </div>
         
@@ -1284,25 +1293,25 @@
   
 
 
-  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+  <script type="text/javascript" src="../js/src/utils.js?v=5.1.2"></script>
 
-  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
-
-
-
-  
-  
-
-  
-  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
-<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+  <script type="text/javascript" src="../js/src/motion.js?v=5.1.2"></script>
 
 
 
   
+  
+
+  
+  <script type="text/javascript" src="../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../js/src/post-details.js?v=5.1.2"></script>
 
 
-  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
+
+  
+
+
+  <script type="text/javascript" src="../js/src/bootstrap.js?v=5.1.2"></script>
 
 
 
@@ -1318,8 +1327,8 @@
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'https://johntse.dev/2016/10/09/thinking-in-bigdata/';
-          this.page.identifier = '2016/10/09/thinking-in-bigdata/';
+          this.page.url = 'https://johntse.dev/thinking-in-bigdata/';
+          this.page.identifier = 'thinking-in-bigdata/';
           this.page.title = 'Thinking in Bigdata';
         };
         var d = document, s = d.createElement('script');
@@ -1358,7 +1367,7 @@
     var isfetched = false;
     var isXml = true;
     // Search DB path;
-    var search_path = "";
+    var search_path = "search.xml";
     if (search_path.length === 0) {
       search_path = "search.xml";
     } else if (/json$/i.test(search_path)) {
@@ -1720,8 +1729,8 @@
 
 
   
-  <script type="text/javascript" src="../../../../js/src/js.cookie.js?v=5.1.2"></script>
-  <script type="text/javascript" src="../../../../js/src/scroll-cookie.js?v=5.1.2"></script>
+  <script type="text/javascript" src="../js/src/js.cookie.js?v=5.1.2"></script>
+  <script type="text/javascript" src="../js/src/scroll-cookie.js?v=5.1.2"></script>
 
 
   

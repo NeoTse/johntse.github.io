@@ -95,7 +95,7 @@
 
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-<link href="../../../../css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+<link href="../css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
 
 
   <meta name="keywords" content="algorithm,data structure,">
@@ -104,10 +104,12 @@
 
 
 
+  <link rel="alternate" href="../atom.xml" title="敏思·践行" type="application/atom+xml">
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico?v=5.1.2">
+
+  <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico?v=5.1.2">
 
 
 
@@ -118,23 +120,23 @@
 <meta name="keywords" content="algorithm,data structure">
 <meta property="og:type" content="article">
 <meta property="og:title" content="说说地址标准化过程中使用的一些数据结构和算法">
-<meta property="og:url" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/index.html">
+<meta property="og:url" content="https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/index.html">
 <meta property="og:site_name" content="敏思·践行">
 <meta property="og:description" content="地址标准化在数据处理过程中算是一个比较常见的需求，这里说说个人在地址标准化过程中的一些实现思路和算法，抛砖引玉。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/Trie_example.png">
-<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/ac.png">
-<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/match_test.png">
-<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/POI_check_test.png">
-<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/wtf.png">
-<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/DFAexample.png">
-<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/address_model.png">
-<meta property="og:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/bitset.png">
+<meta property="og:image" content="https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/Trie_example.png">
+<meta property="og:image" content="https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/ac.png">
+<meta property="og:image" content="https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/match_test.png">
+<meta property="og:image" content="https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/POI_check_test.png">
+<meta property="og:image" content="https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/wtf.png">
+<meta property="og:image" content="https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/DFAexample.png">
+<meta property="og:image" content="https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/address_model.png">
+<meta property="og:image" content="https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/bitset.png">
 <meta property="og:updated_time" content="2020-05-10T06:22:10.066Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="说说地址标准化过程中使用的一些数据结构和算法">
 <meta name="twitter:description" content="地址标准化在数据处理过程中算是一个比较常见的需求，这里说说个人在地址标准化过程中的一些实现思路和算法，抛砖引玉。">
-<meta name="twitter:image" content="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/Trie_example.png">
+<meta name="twitter:image" content="https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/Trie_example.png">
 
 
 
@@ -163,7 +165,7 @@
 
 
 
-  <link rel="canonical" href="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/">
+  <link rel="canonical" href="https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/">
 
 
 
@@ -402,7 +404,7 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="../../../../categories/engineering/" itemprop="url" rel="index">
+                  <a href="../categories/engineering/" itemprop="url" rel="index">
                     <span itemprop="name">engineering</span>
                   </a>
                 </span>
@@ -421,7 +423,7 @@
                   <i class="fa fa-comment-o"></i>
                 </span>
                 <a href="#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/" itemprop="commentCount"></span>
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="talk-about-some-data-structures-and-algorithms-used-in-address-standardization/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -506,7 +508,7 @@
 </ul>
 <p>如何解决呢？</p>
 <h2 id="前缀树-Trie"><a href="#前缀树-Trie" class="headerlink" title="前缀树/Trie"></a>前缀树/Trie</h2><p>一种用于字符串匹配的高效数据结构，可实现前缀压缩和线性匹配。</p>
-<img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/Trie_example.png" title="Trie_example">
+<img src="/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/Trie_example.png" title="Trie_example">
 
 <p>图中有8个键，分别为”A”, “to”, “tea”, “ted”, “ten”, “i”, “in” 以及 “inn”。其中的数字对应了每个键对应的值。</p>
 <h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><ul>
@@ -538,7 +540,7 @@
 <li>emits; 命中一个模式串（也称output表）</li>
 </ul>
 <h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><p>以经典的ushers为例，模式串是he/ she/ his /hers，文本为“ushers”。构建的自动机如图：</p>
-<img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/ac.png" title="ac">
+<img src="/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/ac.png" title="ac">
 
 <h3 id="匹配过程"><a href="#匹配过程" class="headerlink" title="匹配过程"></a>匹配过程</h3><p>自动机从根节点0出发</p>
 <ol>
@@ -590,7 +592,7 @@
 </tr>
 </tbody></table>
 <h3 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h3><p>测试条件：给定63万个字符串，从中随机抽取100个字符串作为待识别字符串，测试完成100个字符串匹配需要多长时间？</p>
-<img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/match_test.png" title="match_test">
+<img src="/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/match_test.png" title="match_test">
 
 <h2 id="重复字符串"><a href="#重复字符串" class="headerlink" title="重复字符串"></a>重复字符串</h2><p>时间地址处理过程中经常会遇到这样的问题：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">江苏省南京市江苏省南京市鼓楼区皇后大道22号南京大学</span><br></pre></td></tr></table></figure>
@@ -752,14 +754,14 @@
 <li>“南京市” “建邺区” “烽火科技大厦”</li>
 <li>“南京市” “建邺区” “烽火科技大厦”</li>
 </ul>
-<h3 id="实际效果"><a href="#实际效果" class="headerlink" title="实际效果"></a>实际效果</h3><img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/POI_check_test.png" title="POI_check_test">
+<h3 id="实际效果"><a href="#实际效果" class="headerlink" title="实际效果"></a>实际效果</h3><img src="/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/POI_check_test.png" title="POI_check_test">
 
 <h2 id="逻辑判断太复杂"><a href="#逻辑判断太复杂" class="headerlink" title="逻辑判断太复杂"></a>逻辑判断太复杂</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (condition1) &#123;</span><br><span class="line">  <span class="keyword">if</span> (condition12 &amp;&amp; condition3) &#123;</span><br><span class="line">    ....</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    ....</span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (condition4 || condition5) &#123;</span><br><span class="line">  <span class="keyword">if</span> (condition6 &amp;&amp; condition7 || condition8) &#123;</span><br><span class="line">    <span class="keyword">if</span> (condition9) &#123;</span><br><span class="line">      ...</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (condition10) &#123;</span><br><span class="line">      <span class="keyword">if</span> (condition11) &#123;</span><br><span class="line">        ....</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        ....</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (condition12 &amp;&amp; condition13) &#123;</span><br><span class="line">      </span><br><span class="line">    &#125;</span><br><span class="line">    ....</span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (condition134) &#123;</span><br><span class="line">  ....</span><br><span class="line">&#125;</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
 
-<img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/wtf.png" title="wtf">
+<img src="/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/wtf.png" title="wtf">
 
 <p>其实控制语句描述的是状态如何迁移，需要明确哪些是状态，迁移条件是什么。而态机就是用来描述状态及其迁移状态的结构，其中有限状态机使用最广。</p>
-<h2 id="有限状态机-FSM-FSA"><a href="#有限状态机-FSM-FSA" class="headerlink" title="有限状态机(FSM/FSA)"></a>有限状态机(FSM/FSA)</h2><img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/DFAexample.png" title="DFAexample">
+<h2 id="有限状态机-FSM-FSA"><a href="#有限状态机-FSM-FSA" class="headerlink" title="有限状态机(FSM/FSA)"></a>有限状态机(FSM/FSA)</h2><img src="/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/DFAexample.png" title="DFAexample">
 
 <p>这是个很简单的状态机，你知道它表达的是什么吗？</p>
 <p> <span style="background-color:#252525;">其实它表示一个含有偶数个0的二进制数。</span> </p>
@@ -774,7 +776,7 @@
 <p>你能说出上图的五要素吗？</p>
 <h3 id="实现-5"><a href="#实现-5" class="headerlink" title="实现"></a>实现</h3><p>实现不复杂，一般需要定义<strong>state</strong>和<strong>transition</strong>。核心在于状态之间的迁移实现，比如Map或者Array。</p>
 <h3 id="实际应用-1"><a href="#实际应用-1" class="headerlink" title="实际应用"></a>实际应用</h3><p>地址库中需要对规范化的地址进行检查，以便满足业务要求。比如要求实现以下条件约束的检查：</p>
-<img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/address_model.png" title="address_model">
+<img src="/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/address_model.png" title="address_model">
 
 <p>如果使用控制语句实现，就会很复杂，且如果业务需求变化，整个逻辑就需要调整，代码需要重新编译，容易出错。因此，我们通过FSA抽象出可配置的检查：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">model</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--states描述了当前模型中包含的各种状态。id表示状态唯一代号，不能够重复；name表示状态名称；isTerminated表示该状态是否是可总结的--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">states</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"root"</span> <span class="attr">name</span>=<span class="string">"中国"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L1"</span> <span class="attr">name</span>=<span class="string">"省"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L2"</span> <span class="attr">name</span>=<span class="string">"市"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L3"</span> <span class="attr">name</span>=<span class="string">"区"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L4"</span> <span class="attr">name</span>=<span class="string">"街道"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L5"</span> <span class="attr">name</span>=<span class="string">"社区"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L6"</span> <span class="attr">name</span>=<span class="string">"路"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L7"</span> <span class="attr">name</span>=<span class="string">"号"</span> <span class="attr">isTerminated</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L8"</span> <span class="attr">name</span>=<span class="string">"小区"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L9"</span> <span class="attr">name</span>=<span class="string">"楼栋"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L10"</span> <span class="attr">name</span>=<span class="string">"单元"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L11"</span> <span class="attr">name</span>=<span class="string">"楼层"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">state</span> <span class="attr">id</span>=<span class="string">"L12"</span> <span class="attr">name</span>=<span class="string">"室"</span> <span class="attr">isTerminated</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">states</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--transitions描述了各个状态之间如何转移。from表示当前状态；to表示转移后的状态；</span></span><br><span class="line"><span class="comment">    when表示如何或者什么时候转移，目前表示对应等级元素存在时--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">transitions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"root"</span> <span class="attr">to</span>=<span class="string">"L1"</span> <span class="attr">when</span>=<span class="string">"A"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L1"</span> <span class="attr">to</span>=<span class="string">"L2"</span> <span class="attr">when</span>=<span class="string">"B"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L2"</span> <span class="attr">to</span>=<span class="string">"L3"</span> <span class="attr">when</span>=<span class="string">"C"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L2"</span> <span class="attr">to</span>=<span class="string">"L4"</span> <span class="attr">when</span>=<span class="string">"D"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L2"</span> <span class="attr">to</span>=<span class="string">"L6"</span> <span class="attr">when</span>=<span class="string">"F"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L3"</span> <span class="attr">to</span>=<span class="string">"L4"</span> <span class="attr">when</span>=<span class="string">"D"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L3"</span> <span class="attr">to</span>=<span class="string">"L5"</span> <span class="attr">when</span>=<span class="string">"E"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L3"</span> <span class="attr">to</span>=<span class="string">"L6"</span> <span class="attr">when</span>=<span class="string">"F"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L3"</span> <span class="attr">to</span>=<span class="string">"L8"</span> <span class="attr">when</span>=<span class="string">"H"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L4"</span> <span class="attr">to</span>=<span class="string">"L5"</span> <span class="attr">when</span>=<span class="string">"E"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L4"</span> <span class="attr">to</span>=<span class="string">"L6"</span> <span class="attr">when</span>=<span class="string">"F"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L4"</span> <span class="attr">to</span>=<span class="string">"L8"</span> <span class="attr">when</span>=<span class="string">"H"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L5"</span> <span class="attr">to</span>=<span class="string">"L6"</span> <span class="attr">when</span>=<span class="string">"F"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L5"</span> <span class="attr">to</span>=<span class="string">"L7"</span> <span class="attr">when</span>=<span class="string">"G"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L5"</span> <span class="attr">to</span>=<span class="string">"L8"</span> <span class="attr">when</span>=<span class="string">"H"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L6"</span> <span class="attr">to</span>=<span class="string">"L7"</span> <span class="attr">when</span>=<span class="string">"G"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L6"</span> <span class="attr">to</span>=<span class="string">"L8"</span> <span class="attr">when</span>=<span class="string">"H"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L7"</span> <span class="attr">to</span>=<span class="string">"L8"</span> <span class="attr">when</span>=<span class="string">"H"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L7"</span> <span class="attr">to</span>=<span class="string">"L9"</span> <span class="attr">when</span>=<span class="string">"J"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L8"</span> <span class="attr">to</span>=<span class="string">"L9"</span> <span class="attr">when</span>=<span class="string">"J"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L8"</span> <span class="attr">to</span>=<span class="string">"L12"</span> <span class="attr">when</span>=<span class="string">"M"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L9"</span> <span class="attr">to</span>=<span class="string">"L10"</span> <span class="attr">when</span>=<span class="string">"K"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L9"</span> <span class="attr">to</span>=<span class="string">"L11"</span> <span class="attr">when</span>=<span class="string">"L"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L9"</span> <span class="attr">to</span>=<span class="string">"L12"</span> <span class="attr">when</span>=<span class="string">"M"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L10"</span> <span class="attr">to</span>=<span class="string">"L11"</span> <span class="attr">when</span>=<span class="string">"L"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L10"</span> <span class="attr">to</span>=<span class="string">"L12"</span> <span class="attr">when</span>=<span class="string">"M"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">transition</span> <span class="attr">from</span>=<span class="string">"L11"</span> <span class="attr">to</span>=<span class="string">"L12"</span> <span class="attr">when</span>=<span class="string">"M"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">transitions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">model</span>&gt;</span></span><br></pre></td></tr></table></figure>
@@ -807,7 +809,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> binary = <span class="number">0b1010_1010_1010</span>;</span><br></pre></td></tr></table></figure>
 
 <h3 id="BitSet"><a href="#BitSet" class="headerlink" title="BitSet"></a>BitSet</h3><p>一般情况下可以利用byte，short，int和long加上位运算来进行少量信息的计算，但是当需要很多位来存储信息时，比如Bitmap，BloomFilter中。虽然可以通过多个int或者long来存储，但Java中提供了更为方便的<strong>BitSet</strong>。</p>
-<img src="/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/bitset.png" title="bitset">
+<img src="/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/bitset.png" title="bitset">
 
 <p>一般可以利用它来大幅度提高内存使用效率，比如下面这个题目：</p>
 <blockquote>
@@ -864,7 +866,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/" title="说说地址标准化过程中使用的一些数据结构和算法">https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/</a>
+    <a href="https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/" title="说说地址标准化过程中使用的一些数据结构和算法">https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -879,9 +881,9 @@
       
         <div class="post-tags">
           
-            <a href="../../../../tags/algorithm/" rel="tag"># algorithm</a>
+            <a href="../tags/algorithm/" rel="tag"># algorithm</a>
           
-            <a href="../../../../tags/data-structure/" rel="tag"># data structure</a>
+            <a href="../tags/data-structure/" rel="tag"># data structure</a>
           
         </div>
       
@@ -894,7 +896,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="../../../../2016/10/09/thinking-in-bigdata/" rel="next" title="Thinking in Bigdata">
+              <a href="../thinking-in-bigdata/" rel="next" title="Thinking in Bigdata">
                 <i class="fa fa-chevron-left"></i> Thinking in Bigdata
               </a>
             
@@ -904,7 +906,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="../../../06/09/big-data-engineer-job-requirements/" rel="prev" title="大数据工程师能力指南">
+              <a href="../big-data-engineer-job-requirements/" rel="prev" title="大数据工程师能力指南">
                 大数据工程师能力指南 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -989,7 +991,7 @@
 
           
             <div class="site-state-item site-state-posts">
-              <a href="../../../../archives/">
+              <a href="../archives/">
                 <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">日志</span>
               </a>
@@ -1020,6 +1022,13 @@
 
         </nav>
 
+        
+          <div class="feed-link motion-element">
+            <a href="../atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
         
 
         <div class="links-of-author motion-element">
@@ -1054,7 +1063,7 @@
         
           <div class="cc-license motion-element" itemprop="license">
             <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
-              <img src="../../../../images/cc-by-nc-sa.svg" alt="Creative Commons">
+              <img src="../images/cc-by-nc-sa.svg" alt="Creative Commons">
             </a>
           </div>
         
@@ -1209,25 +1218,25 @@
   
 
 
-  <script type="text/javascript" src="../../../../js/src/utils.js?v=5.1.2"></script>
+  <script type="text/javascript" src="../js/src/utils.js?v=5.1.2"></script>
 
-  <script type="text/javascript" src="../../../../js/src/motion.js?v=5.1.2"></script>
-
-
-
-  
-  
-
-  
-  <script type="text/javascript" src="../../../../js/src/scrollspy.js?v=5.1.2"></script>
-<script type="text/javascript" src="../../../../js/src/post-details.js?v=5.1.2"></script>
+  <script type="text/javascript" src="../js/src/motion.js?v=5.1.2"></script>
 
 
 
   
+  
+
+  
+  <script type="text/javascript" src="../js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="../js/src/post-details.js?v=5.1.2"></script>
 
 
-  <script type="text/javascript" src="../../../../js/src/bootstrap.js?v=5.1.2"></script>
+
+  
+
+
+  <script type="text/javascript" src="../js/src/bootstrap.js?v=5.1.2"></script>
 
 
 
@@ -1243,8 +1252,8 @@
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'https://johntse.dev/2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/';
-          this.page.identifier = '2018/05/18/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/';
+          this.page.url = 'https://johntse.dev/talk-about-some-data-structures-and-algorithms-used-in-address-standardization/';
+          this.page.identifier = 'talk-about-some-data-structures-and-algorithms-used-in-address-standardization/';
           this.page.title = '说说地址标准化过程中使用的一些数据结构和算法';
         };
         var d = document, s = d.createElement('script');
@@ -1283,7 +1292,7 @@
     var isfetched = false;
     var isXml = true;
     // Search DB path;
-    var search_path = "";
+    var search_path = "search.xml";
     if (search_path.length === 0) {
       search_path = "search.xml";
     } else if (/json$/i.test(search_path)) {
@@ -1645,8 +1654,8 @@
 
 
   
-  <script type="text/javascript" src="../../../../js/src/js.cookie.js?v=5.1.2"></script>
-  <script type="text/javascript" src="../../../../js/src/scroll-cookie.js?v=5.1.2"></script>
+  <script type="text/javascript" src="../js/src/js.cookie.js?v=5.1.2"></script>
+  <script type="text/javascript" src="../js/src/scroll-cookie.js?v=5.1.2"></script>
 
 
   
